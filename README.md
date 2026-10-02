@@ -20,6 +20,7 @@ Give your AI the [MCP onboarding prompt](prompts/mcp-onboarding.md) for this wor
 An optional [Solana research buyer](tools/x402-mcp-bridge/README.md) exposes one fixed Devnet research-purchase tool through MCP.
 It requires a separately configured local seller, signer, and explicit human approval. Installing it does not enable payment.
 See the [release status](docs/release-status.md) for verified behavior and remaining gates.
+For a short product walkthrough, use the [hackathon review guide](docs/hackathon-review.md).
 
 1. Open [the onboarding prompt](prompts/onboarding.md).
 2. Copy it into the AI tool that you already use.
