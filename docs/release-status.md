@@ -18,7 +18,7 @@ Research purchases and investment trades are different operations. Neither compo
 |---|---|
 | Research client | 22 automated tests. Two real calls each to begin and finalize against retained local MCP data. |
 | Dashboard import | Desktop and mobile replay preserves explicit user review before baseline acceptance. |
-| Solana buyer | 67 automated tests, typecheck, and standalone frozen-lockfile installation outside the private app. |
+| Solana buyer | 69 automated tests and typecheck. The original 67-test export also passed a standalone frozen-lockfile installation outside the private app. |
 | Seller compatibility | The private application's real seller SDK challenge passes the buyer policy, including header serialization. |
 
 Local verification used Node.js 25.2.1 and pnpm 9.15.4.
@@ -26,12 +26,14 @@ The included CI workflow specifies Node.js 22 and 24, with pnpm 10 for the buyer
 The research replay draft was hand-authored to report missing evidence. Its result state was `SOURCE_NEEDED`.
 The payment tests use synthetic signing and settlement responses. They do not prove an on-chain payment.
 
-The buyer source comes from EquityLayer application commit `3c6cc24` without changes.
+The buyer source matches EquityLayer application commit `ae2e160`.
 The export contains only the buyer's source, tests, dependency lockfile, package configuration, and README.
 It contains no seller database, wallet key, private research, or environment file.
 
 An independent read-only QC checked the export, candidate files, CI commands, and release claims.
 It found no blocker for a local release-candidate commit. It did not verify live settlement or authorize publication.
+The pre-publication QC found a redirect defect in the duplicate-delivery test script. The fix rejects redirects and sets a deadline.
+An independent test used two loopback servers and synthetic credentials. The redirect destination received no request. See [publication QC](2026-10-02-publication-qc.md).
 
 ## Remaining submission gates
 
