@@ -11,7 +11,8 @@ If you can run Node.js, use client/cli.mjs with the endpoint I approve.
 Otherwise, connect my MCP client to https://equitylayer.io/mcp with my approval.
 Do not claim the connection works until get_service_status succeeds.
 
-1. Read the service status and available tool schemas.
+1. Read the service status and available tool schemas. Run doctor if you use the CLI.
+   Stop if begin_research or finalize_research is missing. Ask for an updated server, not payment or sign-in.
 2. Use my dashboard scope if I supply one. Otherwise, help me select a theme and companies.
 3. Call begin_research. Apply its domain checks, source rules, and coverage limits.
 4. Check each company with resolve_company_tracker.

@@ -16,7 +16,7 @@ Research purchases and investment trades are different operations. Neither compo
 
 | Component | Evidence |
 |---|---|
-| Research client | 17 automated tests. Two real calls each to begin and finalize against retained local MCP data. |
+| Research client | 22 automated tests. Two real calls each to begin and finalize against retained local MCP data. |
 | Dashboard import | Desktop and mobile replay preserves explicit user review before baseline acceptance. |
 | Solana buyer | 67 automated tests, typecheck, and standalone frozen-lockfile installation outside the private app. |
 | Seller compatibility | The private application's real seller SDK challenge passes the buyer policy, including header serialization. |
@@ -36,12 +36,14 @@ It found no blocker for a local release-candidate commit. It did not verify live
 ## Remaining submission gates
 
 1. Confirm the repository destination and publish the reviewed source. A local commit is not a public timestamp.
-2. Provide access to a compatible seller and a judge-accessible dashboard build.
+2. Deploy a compatible research MCP and provide a judge-accessible dashboard build and seller.
 3. Configure an approved Devnet payee and durable seller storage.
 4. Obtain explicit authorization for a bounded Devnet payment test. Preserve its actual transaction and matching delivery hash.
 5. Record the final demo and check the organizer's current submission requirements and pre-existing-work rules.
 
 The seller backend and full local dashboard are not included in this source candidate.
 The research client can use the hosted MCP, but deployed versions can differ. Use a compatible local server if a tool is unavailable.
+On October 2, 2026, hosted discovery lacked `begin_research`, `finalize_research`, and `resolve_trading_instrument`.
+Run `npm run research -- doctor` before the demo. A passing discovery check does not verify research execution or payment.
 The Solana buyer only accepts the fixed loopback seller at port 3101. It is not a public multi-seller payment client.
 Buyer pending state is process-local. Do not restart the process to repeat a purchase with uncertain settlement.

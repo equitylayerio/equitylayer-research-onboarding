@@ -6,6 +6,9 @@ import { join } from "node:path";
 import { createServer } from "node:http";
 import { connect, endpointUrl, PROTOCOL, readRpc } from "../client/mcp.mjs";
 import { parseArgs, run } from "../client/cli.mjs";
+import { inspectCompatibility } from "../client/compatibility.mjs";
+
+const researchTools = { tools: ["get_service_status", "begin_research", "resolve_company_tracker", "get_research_update", "finalize_research"].map(name => ({ name })) };
 
 const json = value => new Response(JSON.stringify(value), { headers: { "content-type": "application/json" } });
 const message = (id, result) => ({ jsonrpc: "2.0", id, result });
@@ -132,6 +135,7 @@ test("finalize saves only the importable result and never accepts a baseline", a
     let closed = 0;
     let summary;
     const connectClient = async () => ({
+      tools: async () => researchTools,
       call: async (name, args) => { assert.equal(name, "finalize_research"); assert.equal(args.handle, "public-test-handle");
         return { ok: true, result_file: result, warnings: ["Source required"] }; },
       close: async () => { closed++; },
@@ -206,9 +210,85 @@ test("a missing finalized file creates no output and closes the client", async (
     await writeFile(input, "{}");
     let closed = false;
     await assert.rejects(run(["finalize", "--input", input, "--public-data", "--out", output], {
-      connectClient: async () => ({ call: async () => ({ ok: true }), close: async () => { closed = true; } }),
+      connectClient: async () => ({ tools: async () => researchTools, call: async () => ({ ok: true }), close: async () => { closed = true; } }),
     }), /did not return/);
     assert.equal(closed, true);
     await assert.rejects(stat(output), { code: "ENOENT" });
   } finally { await rm(dir, { recursive: true, force: true }); }
+});
+
+test("doctor distinguishes tool discovery from verified research and payment", async () => {
+  const report = inspectCompatibility("http://localhost/mcp", researchTools);
+  assert.equal(report.research_tools_available, true);
+  assert.equal(report.instrument_mapping_available, false);
+  assert.equal(report.research_execution_verified, false);
+  assert.equal(report.payment_verified, false);
+  for (const tools of [null, {}, { tools: [null] }]) assert.throws(() => inspectCompatibility("x", tools));
+  assert.equal(inspectCompatibility("x", { tools: [...researchTools.tools, { name: "resolve_trading_instrument" }] }).instrument_mapping_available, true);
+});
+
+test("doctor reports missing tools without a tool call and returns a nonzero status", async () => {
+  for (const listing of [researchTools, { tools: [{ name: "get_service_status" }] }]) {
+    let closed = false;
+    let output;
+    const result = await run(["doctor"], {
+      connectClient: async () => ({ tools: async () => listing, call: () => assert.fail("Discovery must not run a tool"), close: async () => { closed = true; } }),
+      stdout: value => { output = JSON.parse(value); },
+    });
+    assert.equal(result.exitCode, listing === researchTools ? 0 : 2);
+    assert.equal(closed, true);
+    assert.equal(output.check, "tool_discovery_only");
+    if (listing !== researchTools) assert.ok(output.missing_research_tools.includes("finalize_research"));
+  }
+});
+
+test("missing research tools block draft transmission and file creation", async () => {
+  const dir = await mkdtemp(join(tmpdir(), "equitylayer-preflight-test-"));
+  try {
+    const input = join(dir, "draft.json");
+    const output = join(dir, "result.json");
+    await writeFile(input, "{}");
+    for (const command of ["begin", "finalize", "instrument"]) {
+      let closed = false;
+      await assert.rejects(run([command, "--input", input, "--out", output, ...(command === "finalize" ? ["--public-data"] : [])], {
+        connectClient: async () => ({ tools: async () => ({ tools: [] }), call: () => assert.fail("Do not transmit input"), close: async () => { closed = true; } }),
+      }), /lacks required tools/);
+      assert.equal(closed, true);
+      await assert.rejects(stat(output), { code: "ENOENT" });
+    }
+  } finally { await rm(dir, { recursive: true, force: true }); }
+});
+
+test("tool discovery follows pagination and preserves later tools", async () => {
+  const server = fakeServer();
+  const cursors = [];
+  const client = await connect("http://localhost/mcp", { fetcher: async (url, init) => {
+    const body = init.body && JSON.parse(init.body);
+    if (body?.method === "tools/list") {
+      cursors.push(body.params?.cursor);
+      return json(message(body.id, body.params?.cursor ? { tools: [{ name: "finalize_research" }] }
+        : { tools: [{ name: "begin_research" }], nextCursor: "second" }));
+    }
+    return server.fetcher(url, init);
+  } });
+  assert.deepEqual((await client.tools()).tools.map(tool => tool.name), ["begin_research", "finalize_research"]);
+  assert.deepEqual(cursors, [undefined, "second"]);
+  await client.close();
+});
+
+test("tool discovery rejects malformed, cyclic, and excessive pagination", async () => {
+  for (const mode of ["malformed", "invalid-cursor", "cycle", "limit"]) {
+    const server = fakeServer();
+    let page = 0;
+    const client = await connect("http://localhost/mcp", { fetcher: async (url, init) => {
+      const body = init.body && JSON.parse(init.body);
+      if (body?.method !== "tools/list") return server.fetcher(url, init);
+      page++;
+      return json(message(body.id, mode === "malformed" ? { tools: [null] } : { tools: [],
+        nextCursor: mode === "invalid-cursor" ? 42 : mode === "cycle" ? "same" : `page-${page}` }));
+    } });
+    await assert.rejects(client.tools(), /invalid|page limit/);
+    assert.ok(page <= 20);
+    await client.close();
+  }
 });

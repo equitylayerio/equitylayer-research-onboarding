@@ -1,11 +1,12 @@
 import { readFile, stat, writeFile } from "node:fs/promises";
 import { pathToFileURL } from "node:url";
 import { connect, endpointUrl } from "./mcp.mjs";
+import { inspectCompatibility } from "./compatibility.mjs";
 
 const TOOLS = { status: "get_service_status", discover: "discover_theses", begin: "begin_research", finalize: "finalize_research",
   company: "resolve_company_tracker", update: "get_research_update", instrument: "resolve_trading_instrument" };
 const HELP = `EquityLayer research client (Node.js 22+)
-  node client/cli.mjs status|tools|discover [--endpoint URL]
+  node client/cli.mjs doctor|status|tools|discover [--endpoint URL]
   node client/cli.mjs begin --input scope.json [--out plan.json] [--endpoint URL]
   node client/cli.mjs finalize --input public-draft.json --public-data --out result.json [--endpoint URL]
   node client/cli.mjs instrument --input symbol.json [--endpoint URL]
@@ -20,7 +21,7 @@ This client cannot pay, sign, trade, or accept a research baseline.
 export function parseArgs(args) {
   if (args.length === 0 || (args.length === 1 && args[0] === "--help")) return { help: true };
   const [command, ...rest] = args;
-  if (!Object.hasOwn(TOOLS, command) && command !== "tools") throw new Error("Read the supported commands with --help.");
+  if (!Object.hasOwn(TOOLS, command) && !["tools", "doctor"].includes(command)) throw new Error("Read the supported commands with --help.");
   const result = { command, endpoint: "https://equitylayer.io/mcp", publicData: false };
   const seen = new Set();
   for (let index = 0; index < rest.length; index++) {
@@ -53,7 +54,20 @@ export async function run(args, { connectClient = connect, stdout = value => pro
   }
   const client = await connectClient(options.endpoint);
   try {
-    const output = options.command === "tools" ? await client.tools() : await client.call(TOOLS[options.command], input);
+    let output;
+    if (options.command === "doctor") {
+      output = inspectCompatibility(options.endpoint, await client.tools());
+    } else if (options.command === "tools") {
+      output = await client.tools();
+    } else {
+      if (["begin", "finalize", "instrument"].includes(options.command)) {
+        const listing = await client.tools();
+        const report = inspectCompatibility(options.endpoint, listing);
+        const available = options.command === "instrument" ? report.instrument_mapping_available : report.research_tools_available;
+        if (!available) throw new Error("This server lacks required tools. Run doctor. Do not send the research draft to this server.");
+      }
+      output = await client.call(TOOLS[options.command], input);
+    }
     const result = options.command === "finalize" ? output.result_file : output;
     if (options.command === "finalize" && (output.ok !== true || !result?.result_id || !result?.result_state)) {
       throw new Error("Finalize did not return a result file.");
@@ -65,11 +79,12 @@ export async function run(args, { connectClient = connect, stdout = value => pro
       stdout(`${JSON.stringify({ saved: options.out, command: options.command, accepted_baseline: false,
         ...(options.command === "finalize" ? { warnings: output.warnings ?? [], delivery: output.delivery } : {}) })}\n`);
     } else { stdout(json); }
+    return { exitCode: options.command === "doctor" && !output.research_tools_available ? 2 : 0 };
   } finally { await client.close(); }
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
-  run(process.argv.slice(2)).catch(error => {
+  run(process.argv.slice(2)).then(result => { process.exitCode = result?.exitCode ?? 0; }).catch(error => {
     const message = error?.code === "EEXIST" ? "The output exists. Choose a new file name."
       : error instanceof SyntaxError ? "The input or server response is not valid JSON."
       : error?.code ? "The local file could not be read or saved. Check its path and permissions."

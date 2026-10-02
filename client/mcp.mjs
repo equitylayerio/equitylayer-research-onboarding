@@ -100,7 +100,25 @@ export async function connect(endpoint, { fetcher = fetch, timeoutMs = 15_000 } 
   protocol = initialized.protocolVersion;
   await request("notifications/initialized", undefined, true);
   return {
-    tools: () => request("tools/list"),
+    async tools() {
+      const tools = [];
+      const cursors = new Set();
+      let cursor;
+      for (let page = 0; page < 20; page++) {
+        const result = await request("tools/list", cursor ? { cursor } : undefined);
+        if (!Array.isArray(result?.tools) || result.tools.some(tool => typeof tool?.name !== "string")) {
+          throw new Error("The server returned an invalid tool list.");
+        }
+        tools.push(...result.tools);
+        if (result.nextCursor === undefined) return { tools };
+        cursor = result.nextCursor;
+        if (typeof cursor !== "string" || !cursor || cursors.has(cursor)) {
+          throw new Error("The server returned an invalid pagination cursor.");
+        }
+        cursors.add(cursor);
+      }
+      throw new Error("The tool list exceeds the page limit.");
+    },
     async call(name, args = {}) {
       if (!TOOL_NAMES.has(name)) throw new Error("This client does not permit that tool.");
       const response = await request("tools/call", { name, arguments: args });

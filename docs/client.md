@@ -6,8 +6,8 @@ It requires Node.js 22 or later. It has no package dependencies.
 ## Start
 
 1. Run `npm test`.
-2. Run `npm run research -- status`.
-3. Run `npm run research -- tools` to read the server's tool schemas.
+2. Run `npm run research -- doctor` to check required tools before you send research.
+3. Run `npm run research -- tools` to read the server's tool schemas after the check passes.
 4. Run `npm run research -- begin --input examples/ai-compute-scope.json --out plan.local.json`.
 5. Give `plan.local.json` to your existing AI. Ask it to apply the research plan and fill the returned `agent_fields_schema`.
 
@@ -23,6 +23,14 @@ The example watch ID is illustrative. It does not identify your dashboard watch.
 
 For a local EquityLayer server, append `--endpoint http://127.0.0.1:3100/mcp` to each command.
 The public server can run an older release. Missing tools require a server update, not a payment or account.
+The `doctor` command only reads tool discovery. Exit code 2 means required research tools are missing.
+Exit code 0 confirms tool names, not source coverage, schema compatibility, successful research, or payment.
+The `begin` and `finalize` commands also check required tools before they send your input.
+The `instrument` command checks its mapping tool separately. It is not required for the research workflow.
+
+On October 2, 2026, the hosted server lacked `begin_research`, `finalize_research`, and `resolve_trading_instrument`.
+Do not use that deployment for this complete workflow until the check passes.
+This repository does not start a compatible local backend. Maintainers must provide that service before an independent review.
 
 ## Return a result to the local dashboard
 

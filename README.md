@@ -14,6 +14,7 @@ It does not bundle live market data, private research packs, or the private prod
 
 For an executable MCP workflow, use the [research client](docs/client.md). It reads the existing harness and saves a result for local review.
 The client has no payment or trading permissions. The complete hackathon release is still in preparation.
+Run `npm run research -- doctor` first. The hosted service may lack required research tools.
 Give your AI the [MCP onboarding prompt](prompts/mcp-onboarding.md) for this workflow.
 
 An optional [Solana research buyer](tools/x402-mcp-bridge/README.md) exposes one fixed Devnet research-purchase tool through MCP.
