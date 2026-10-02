@@ -285,6 +285,27 @@ function evidencePath(executedAt: Date): string {
   return resolve(repositoryRoot, "content", "launch", "evidence", `${stamp}-x402-devnet-payment-proof.json`);
 }
 
+/** Retrieve the existing delivery without forwarding credentials or signing again. */
+export async function checkDuplicateDelivery(
+  original: DeliveryEvidence,
+  endpoint: string,
+  localAuthToken: string,
+  paymentSignature: string,
+  fetchImpl: typeof fetch = fetch,
+): Promise<DuplicateDeliveryEvidence> {
+  const response = await fetchImpl(endpoint, {
+    method: "GET",
+    redirect: "error",
+    signal: AbortSignal.timeout(10_000),
+    headers: {
+      accept: "application/json",
+      [P1A_LOCAL_AUTH_HEADER]: localAuthToken,
+      "payment-signature": paymentSignature,
+    },
+  });
+  return recordedDuplicateDelivery(original, response);
+}
+
 async function writeEvidence(evidence: PaymentProofEvidence, executedAt: Date): Promise<string> {
   const path = evidencePath(executedAt);
   await mkdir(dirname(path), { recursive: true });
@@ -377,15 +398,9 @@ export async function runApprovedDevnetPaymentSmoke(
   const delivery = recordedDelivery(result);
   const paymentResponse = recordedPaymentResponse(paymentResponseHeader);
   requireMatchedPaymentResponse(delivery, paymentResponse);
-  const duplicateResponse = await fetch(config.endpoint, {
-    method: "GET",
-    headers: {
-      accept: "application/json",
-      [P1A_LOCAL_AUTH_HEADER]: config.localAuthToken,
-      "payment-signature": paymentSignature,
-    },
-  });
-  const duplicateDelivery = await recordedDuplicateDelivery(delivery, duplicateResponse);
+  const duplicateDelivery = await checkDuplicateDelivery(
+    delivery, config.endpoint, config.localAuthToken, paymentSignature,
+  );
 
   const executedAt = new Date();
   const evidence: PaymentProofEvidence = {

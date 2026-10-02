@@ -2,6 +2,7 @@ import { encodePaymentResponseHeader } from "@x402/core/http";
 import { describe, expect, it } from "vitest";
 
 import {
+  checkDuplicateDelivery,
   DevnetPaymentSmokeError,
   recordedDelivery,
   recordedDuplicateDelivery,
@@ -83,6 +84,38 @@ describe("approved Devnet payment smoke gate", () => {
 });
 
 describe("approved Devnet payment proof evidence", () => {
+  it("bounds the duplicate request and refuses credential redirects", async () => {
+    let calls = 0;
+    const fetchImpl: typeof fetch = async (_input, init) => {
+      calls += 1;
+      expect(init?.redirect).toBe("error");
+      expect(init?.signal).toBeInstanceOf(AbortSignal);
+      expect(init?.signal?.aborted).toBe(false);
+      expect(new Headers(init?.headers).get("payment-signature")).toBe("synthetic-signature");
+      return new Response(JSON.stringify(deliveryResult()), {
+        headers: { "payment-response": settlementHeader() },
+      });
+    };
+    await expect(checkDuplicateDelivery(
+      recordedDelivery(deliveryResult()), "http://127.0.0.1:3101/test",
+      "synthetic-token", "synthetic-signature", fetchImpl,
+    )).resolves.toMatchObject({ matched_original: true });
+    expect(calls).toBe(1);
+  });
+
+  it("does not retry a failed duplicate request", async () => {
+    let calls = 0;
+    const fetchImpl: typeof fetch = async () => {
+      calls += 1;
+      throw new TypeError("redirect rejected");
+    };
+    await expect(checkDuplicateDelivery(
+      recordedDelivery(deliveryResult()), "http://127.0.0.1:3101/test",
+      "synthetic-token", "synthetic-signature", fetchImpl,
+    )).rejects.toThrow("redirect rejected");
+    expect(calls).toBe(1);
+  });
+
   it("records only the allowlisted delivery summary", () => {
     const evidence = recordedDelivery(deliveryResult());
 
