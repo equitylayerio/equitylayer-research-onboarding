@@ -8,9 +8,18 @@ This repository gives you a public, tool-neutral starting point for the EquityLa
 2. **Build** a source map, company roles, and decision-relevant metrics.
 3. **Verify** each update against dated evidence, limits, and falsifiers.
 
-It does not provide investment advice, live market data, trade execution, or access to EquityLayer's private product code and research packs.
+It does not bundle live market data, private research packs, or the private product backend. It does not execute investment trades.
 
 ## Start in 10 minutes
+
+For an executable MCP workflow, use the [research client](docs/client.md). It reads the existing harness and saves a result for local review.
+The client has no payment or trading permissions. The complete hackathon release is still in preparation.
+Run `npm run research -- doctor` first. The hosted service may lack required research tools.
+Give your AI the [MCP onboarding prompt](prompts/mcp-onboarding.md) for this workflow.
+
+An optional [Solana research buyer](tools/x402-mcp-bridge/README.md) exposes one fixed Devnet research-purchase tool through MCP.
+It requires a separately configured local seller, signer, and explicit human approval. Installing it does not enable payment.
+See the [release status](docs/release-status.md) for verified behavior and remaining gates.
 
 1. Open [the onboarding prompt](prompts/onboarding.md).
 2. Copy it into the AI tool that you already use.
@@ -35,6 +44,12 @@ A useful research workspace has:
 See the [illustrative AI compute example](examples/ai-compute.md). It shows structure only. It is not current research and does not recommend a security.
 
 ## Repository map
+
+- `client/`: executable MCP client with no package dependencies.
+- `docs/client.md`: connection, research, and local result instructions.
+- `examples/ai-compute-scope.json`: a fixed cross-market scope, not a current research report.
+- `tools/x402-mcp-bridge/`: optional Solana Devnet research buyer, tests, and fixed purchase policy.
+- `docs/release-status.md`: verification evidence and submission boundaries.
 
 - `prompts/onboarding.md`: create the first research workspace.
 - `prompts/review-update.md`: compare new evidence with the saved baseline.
