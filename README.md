@@ -12,6 +12,10 @@ It does not provide investment advice, live market data, trade execution, or acc
 
 ## Start in 10 minutes
 
+For an executable MCP workflow, use the [research client](docs/client.md). It reads the existing harness and saves a result for local review.
+The client has no payment or trading permissions. The complete hackathon release is still in preparation.
+Give your AI the [MCP onboarding prompt](prompts/mcp-onboarding.md) for this workflow.
+
 1. Open [the onboarding prompt](prompts/onboarding.md).
 2. Copy it into the AI tool that you already use.
 3. Answer its questions. Start with one theme and one decision.
@@ -35,6 +39,10 @@ A useful research workspace has:
 See the [illustrative AI compute example](examples/ai-compute.md). It shows structure only. It is not current research and does not recommend a security.
 
 ## Repository map
+
+- `client/`: executable MCP client with no package dependencies.
+- `docs/client.md`: connection, research, and local result instructions.
+- `examples/ai-compute-scope.json`: a fixed cross-market scope, not a current research report.
 
 - `prompts/onboarding.md`: create the first research workspace.
 - `prompts/review-update.md`: compare new evidence with the saved baseline.

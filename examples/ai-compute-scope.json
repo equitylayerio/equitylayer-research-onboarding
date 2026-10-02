@@ -1,0 +1,9 @@
+{
+  "watch_id": "8713bba6-e91e-4c1a-b756-2b18d2b7c775",
+  "revision": 1,
+  "theme_id": "ai_compute",
+  "stage_id": "memory",
+  "symbols": ["3711.TW", "NVDA", "6857.T", "000660.KS"],
+  "available_mcp_names": [],
+  "as_of_feed_day": "2026-10-01"
+}
