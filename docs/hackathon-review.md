@@ -41,6 +41,7 @@ Research purchases buy information. They do not buy securities.
 - [Public release PR](https://github.com/equitylayerio/equitylayer-research-onboarding/pull/1)
 - [CI verification](https://github.com/equitylayerio/equitylayer-research-onboarding/actions/runs/37010627506)
 - [Independent publication QC](2026-10-02-publication-qc.md)
+- [Hosted execution verification](2026-10-02-hosted-verification.md)
 
 EquityLayer existed before this hackathon. Repository publication is not evidence that all work began during the event.
 The submission must distinguish prior work from event-period changes. Organizer eligibility confirmation remains pending.

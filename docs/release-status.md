@@ -39,14 +39,14 @@ An independent test used two loopback servers and synthetic credentials. The red
 ## Remaining submission gates
 
 1. Published: [public release PR](https://github.com/equitylayerio/equitylayer-research-onboarding/pull/1), merged into `main` on October 2, 2026.
-2. Deploy a compatible research MCP and provide a judge-accessible dashboard build and seller.
+2. Published: the compatible hosted research MCP and dashboard. A judge-accessible Solana seller remains pending.
 3. Configure an approved Devnet payee and durable seller storage.
 4. Obtain explicit authorization for a bounded Devnet payment test. Preserve its actual transaction and matching delivery hash.
 5. Record the final demo and check the organizer's current submission requirements and pre-existing-work rules.
 
 The seller backend and full local dashboard are not included in this source candidate.
 The research client can use the hosted MCP, but deployed versions can differ. Use a compatible local server if a tool is unavailable.
-On October 2, 2026, hosted discovery lacked `begin_research`, `finalize_research`, and `resolve_trading_instrument`.
+The October 2 production deployment resolved the earlier missing-tool failure. Two hosted begin/finalize checks and a retained filing outcome check passed. See [hosted verification](2026-10-02-hosted-verification.md).
 Run `npm run research -- doctor` before the demo. A passing discovery check does not verify research execution or payment.
 The Solana buyer only accepts the fixed loopback seller at port 3101. It is not a public multi-seller payment client.
 Buyer pending state is process-local. Do not restart the process to repeat a purchase with uncertain settlement.
