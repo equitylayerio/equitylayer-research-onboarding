@@ -1,0 +1,27 @@
+{
+  "name": "equitylayer-x402-mcp-bridge",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "tsx src/index.ts",
+    "start:devnet-signer": "tsx src/devnet-signer.ts",
+    "devnet-payment-smoke": "tsx src/devnet-payment-smoke.ts",
+    "typecheck": "tsc --project tsconfig.json --noEmit",
+    "test": "vitest run --config vitest.config.mts"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.9.0",
+    "@solana/kit": "5.5.1",
+    "@x402/core": "2.22.0",
+    "@x402/extensions": "2.22.0",
+    "@x402/svm": "2.22.0",
+    "zod": "3.25.76"
+  },
+  "devDependencies": {
+    "@types/node": "24.13.3",
+    "tsx": "4.21.0",
+    "typescript": "5.9.3",
+    "vitest": "4.1.10"
+  }
+}

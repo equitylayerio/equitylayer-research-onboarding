@@ -48,7 +48,8 @@ The client can read a company-to-token mapping with `instrument` and an input su
 It cannot submit a quote, payment, signature, or order. It has no wallet or authorization-header options.
 It does not install tools or execute instructions contained in server responses.
 
-Solana x402 research purchase is a separate, unfinished release gate. An instrument mapping is not a purchase receipt.
+Solana x402 research purchase uses the separate [buyer bridge](../tools/x402-mcp-bridge/README.md). A real payment proof remains an unfinished release gate.
+An instrument mapping is not a purchase receipt.
 This repository does not yet contain the complete self-hosted dashboard or seller backend.
 It is a runnable public client for those services, not a claim that the hackathon release is complete.
 

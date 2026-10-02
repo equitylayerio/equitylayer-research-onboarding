@@ -14,3 +14,20 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
       - run: npm test
+  solana-buyer:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: tools/x402-mcp-bridge
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+          run_install: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: pnpm install --frozen-lockfile --ignore-scripts
+      - run: pnpm test
+      - run: pnpm typecheck
