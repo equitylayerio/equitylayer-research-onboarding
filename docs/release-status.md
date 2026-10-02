@@ -1,6 +1,6 @@
 # Release preparation status
 
-This repository is a public-source candidate. It is not evidence of a completed hackathon submission or a live payment.
+The public source release is published. It is not evidence of a completed hackathon submission or a live payment.
 
 ## Product boundary
 
@@ -22,7 +22,8 @@ Research purchases and investment trades are different operations. Neither compo
 | Seller compatibility | The private application's real seller SDK challenge passes the buyer policy, including header serialization. |
 
 Local verification used Node.js 25.2.1 and pnpm 9.15.4.
-The included CI workflow specifies Node.js 22 and 24, with pnpm 10 for the buyer. Those CI jobs have not run yet.
+The included CI workflow passed on Node.js 22 and 24, with pnpm 10 for the buyer.
+See [the verified CI run](https://github.com/equitylayerio/equitylayer-research-onboarding/actions/runs/37010627506) for release source `9691953`.
 The research replay draft was hand-authored to report missing evidence. Its result state was `SOURCE_NEEDED`.
 The payment tests use synthetic signing and settlement responses. They do not prove an on-chain payment.
 
@@ -37,7 +38,7 @@ An independent test used two loopback servers and synthetic credentials. The red
 
 ## Remaining submission gates
 
-1. Confirm the repository destination and publish the reviewed source. A local commit is not a public timestamp.
+1. Published: [public release PR](https://github.com/equitylayerio/equitylayer-research-onboarding/pull/1), merged into `main` on October 2, 2026.
 2. Deploy a compatible research MCP and provide a judge-accessible dashboard build and seller.
 3. Configure an approved Devnet payee and durable seller storage.
 4. Obtain explicit authorization for a bounded Devnet payment test. Preserve its actual transaction and matching delivery hash.
