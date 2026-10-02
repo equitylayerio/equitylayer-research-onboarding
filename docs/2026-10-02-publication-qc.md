@@ -29,3 +29,8 @@ The request failed with `unexpected redirect`.
 
 Hosted tool deployment, CI results, and live settlement require separate verification.
 No transaction, payment, or wallet signature occurred during this QC.
+
+## Subsequent verification
+
+Public CI passed on Node 22 and 24. The production research service was then deployed and checked independently of this publication QC.
+See [hosted verification](2026-10-02-hosted-verification.md). Live Solana settlement remains unverified.

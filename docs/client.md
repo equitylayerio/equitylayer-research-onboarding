@@ -28,9 +28,9 @@ Exit code 0 confirms tool names, not source coverage, schema compatibility, succ
 The `begin` and `finalize` commands also check required tools before they send your input.
 The `instrument` command checks its mapping tool separately. It is not required for the research workflow.
 
-On October 2, 2026, the hosted server lacked `begin_research`, `finalize_research`, and `resolve_trading_instrument`.
-Do not use that deployment for this complete workflow until the check passes.
-This repository does not start a compatible local backend. Maintainers must provide that service before an independent review.
+The October 2, 2026 deployment added the required hosted tools. Two hosted begin/finalize checks passed with a public, hand-authored `SOURCE_NEEDED` draft.
+These checks verify execution and result delivery, not investment conclusions or payment. See [hosted verification](2026-10-02-hosted-verification.md).
+This repository does not start a local backend. Use the hosted service or a separately supplied compatible server.
 
 ## Return a result to the local dashboard
 
