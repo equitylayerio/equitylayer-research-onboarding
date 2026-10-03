@@ -1,9 +1,10 @@
 import { readFile } from "node:fs/promises";
 import { describe, expect, it, vi } from "vitest";
-import { checkChainTransaction, checkHistoricalChain, checkHistoricalProof, checkMcpDiscovery, HISTORICAL_TRANSACTION } from "./judge-check.js";
+import { checkChainTransaction, checkHistoricalChain, checkHistoricalProof, checkMcpDiscovery, checkMcpProof, HISTORICAL_TRANSACTION, MCP_TRANSACTION } from "./judge-check.js";
 import { P1A_ASSET, TOOL_NAME } from "./policy.js";
 
 const proof = JSON.parse(await readFile(new URL("../../../docs/evidence/2026-10-03-x402-devnet-payment-proof.json", import.meta.url), "utf8"));
+const mcpProof = JSON.parse(await readFile(new URL("../../../docs/evidence/2026-10-03-mcp-devnet-payment-proof.json", import.meta.url), "utf8"));
 const owners = ["63SLWtHaXHFK4yFN85x6Y5MsD4VDoFMZ98Sk4yFF7JP1", "269BifgYuikBEby13nG7CB3sfCEUjLwyxpuY3PmLXw6P"];
 function transaction() {
   const balances = (amounts: string[]) => owners.map((owner, accountIndex) => ({ owner, accountIndex, mint: P1A_ASSET, uiTokenAmount: { amount: amounts[accountIndex], decimals: 6 } }));
@@ -24,6 +25,33 @@ describe("historical proof", () => {
     if (field === "duplicate") changed.duplicate_delivery.receipt_id = "different";
     if (field === "missing") delete changed.delivery;
     expect(() => checkHistoricalProof(changed)).toThrow();
+  });
+});
+
+describe("MCP purchase proof", () => {
+  it("accepts the retained MCP metadata", () => expect(() => checkMcpProof(mcpProof)).not.toThrow());
+  it.each(["count", "tool", "transport", "receipt", "hash", "signature", "seller", "scope", "extra_call"])("rejects a %s mismatch", field => {
+    const changed = structuredClone(mcpProof);
+    if (field === "count") changed.protocol.calls = 2;
+    if (field === "tool") changed.protocol.events[2].name = "wrong";
+    if (field === "transport") changed.protocol.transport = "direct";
+    if (field === "receipt") changed.delivery.receipt.receipt_id = "wrong";
+    if (field === "hash") changed.protocol.events[4].output_hash = "0".repeat(64);
+    if (field === "signature") changed.payment.transaction_reference = HISTORICAL_TRANSACTION;
+    if (field === "seller") changed.payment.seller = "wrong";
+    if (field === "scope") changed.delivery.input_scope.symbols.pop();
+    if (field === "extra_call") changed.protocol.events.push(changed.protocol.events[2]);
+    expect(() => checkMcpProof(changed)).toThrow();
+  });
+  it("verifies the selected MCP transaction instead of the older transaction", async () => {
+    const tx = transaction();
+    tx.transaction.signatures[0] = MCP_TRANSACTION;
+    const results = ["EtWTRABZaYq6iMfeYKouRu166VU2xqa1wcaWoxPkrZBG", { value: [{ err: null, confirmationStatus: "finalized" }] }, tx];
+    const request = vi.fn(async () => Response.json({ jsonrpc: "2.0", id: 1, result: results.shift() }));
+    await checkHistoricalChain(request as typeof fetch, MCP_TRANSACTION);
+    const calls = request.mock.calls as unknown as [string, RequestInit][];
+    expect(JSON.parse(String(calls[2][1].body)).params[0]).toBe(MCP_TRANSACTION);
+    expect(() => checkChainTransaction(transaction(), MCP_TRANSACTION)).toThrow();
   });
 });
 

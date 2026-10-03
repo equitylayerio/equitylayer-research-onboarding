@@ -59,7 +59,8 @@ It does not install tools or execute instructions contained in server responses.
 Solana x402 research purchase uses the separate [buyer bridge](../tools/x402-mcp-bridge/README.md).
 One local Devnet purchase settled. See [the verification record](2026-10-03-devnet-payment-verification.md).
 The [judge check](judge-check.md) verifies discovery and the existing transaction without a wallet.
-An AI-host-driven purchase demo remains unfinished.
+A later Codex-orchestrated SDK client completed one purchase through MCP stdio. See [the MCP purchase record](2026-10-03-mcp-purchase-verification.md).
+Native Claude or Codex connector installation remains untested.
 An instrument mapping is not a purchase receipt.
 This repository does not yet contain the complete self-hosted dashboard or seller backend.
 It is a runnable public client for those services, not a claim that the hackathon release is complete.
