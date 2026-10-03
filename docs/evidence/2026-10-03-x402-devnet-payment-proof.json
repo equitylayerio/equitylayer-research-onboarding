@@ -1,0 +1,101 @@
+{
+  "schema_version": "1.0",
+  "kind": "equitylayer_x402_devnet_payment_proof",
+  "executed_at": "2026-10-03T00:36:28.989Z",
+  "environment": "solana_devnet_local_only",
+  "approval": {
+    "required": true,
+    "approved_at": "2026-10-03T00:36:21.678Z"
+  },
+  "payment_challenge": {
+    "x402_version": 2,
+    "resource": {
+      "url": "http://127.0.0.1:3101/api/x402/devnet/taiwan-monthly-revenue-monitor-v1",
+      "mime_type": "application/json",
+      "description": "P1a local-only source-linked Taiwan monthly-revenue monitor refresh."
+    },
+    "requirement": {
+      "scheme": "exact",
+      "network": "solana:EtWTRABZaYq6iMfeYKouRu166VU2xqa1",
+      "asset": "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU",
+      "amount_atomic": "50000",
+      "pay_to": "269BifgYuikBEby13nG7CB3sfCEUjLwyxpuY3PmLXw6P",
+      "max_timeout_seconds": 300,
+      "capability_id": "taiwan-monthly-revenue-monitor",
+      "capability_version": "v1",
+      "output_schema": [
+        "task_id",
+        "capability_id",
+        "capability_version",
+        "input_scope",
+        "research_pack",
+        "output_hash",
+        "receipt"
+      ],
+      "spend_limit": {
+        "per_payment_atomic": "50000",
+        "session_max_atomic": "150000",
+        "session_max_payments": 3
+      },
+      "symbols": [
+        "2383.TW",
+        "3037.TW",
+        "8046.TW"
+      ]
+    },
+    "payment_identifier_required": true
+  },
+  "payment_response": {
+    "success": true,
+    "transaction_reference": "XUZFjtxNd8Zyxcs3f5nx3TZ6yncVQXHma1qAvJsDPKw7dTPRnbuW2nBSPJzNX3Gzuv3JnAeVfSScJPDabemgj67",
+    "network": "solana:EtWTRABZaYq6iMfeYKouRu166VU2xqa1"
+  },
+  "delivery": {
+    "task_id": "elr_0254ff72-de64-495b-a279-deee4af088e5",
+    "capability_id": "taiwan-monthly-revenue-monitor",
+    "capability_version": "v1",
+    "input_scope": {
+      "symbols": [
+        "2383.TW",
+        "3037.TW",
+        "8046.TW"
+      ],
+      "baseline_period": "2026-06",
+      "source_url": "https://openapi.twse.com.tw/v1/opendata/t187ap05_L"
+    },
+    "research_pack": {
+      "schema_version": "1.0",
+      "pack_version": "taiwan-monthly-revenue-monitor:v1:2026-08",
+      "as_of": "2026-08",
+      "as_of_date": "2026-09-17",
+      "report_period": "2026-08",
+      "prior_as_of": "2026-06",
+      "prior_as_of_date": "2026-07-17",
+      "source": {
+        "api_url": "https://openapi.twse.com.tw/v1/opendata/t187ap05_L",
+        "snapshot_hash": "cd1da6d2e9f487daddfe9fb57273fbb75c760d329e5d61d88c89bf5c84935715",
+        "evidence_state": "official_source"
+      }
+    },
+    "output_hash": "804c1ac2c528d63da6757f04034397858c907991c3c3cc368aa27ca57313af76",
+    "receipt": {
+      "receipt_id": "8388ae53-7a19-41ed-a571-dd928a7ff74a",
+      "status": "settled",
+      "transaction_reference": "XUZFjtxNd8Zyxcs3f5nx3TZ6yncVQXHma1qAvJsDPKw7dTPRnbuW2nBSPJzNX3Gzuv3JnAeVfSScJPDabemgj67",
+      "settled_at": "2026-10-03T00:36:28.948Z"
+    }
+  },
+  "duplicate_delivery": {
+    "status": 200,
+    "matched_original": true,
+    "payment_response": {
+      "success": true,
+      "transaction_reference": "XUZFjtxNd8Zyxcs3f5nx3TZ6yncVQXHma1qAvJsDPKw7dTPRnbuW2nBSPJzNX3Gzuv3JnAeVfSScJPDabemgj67",
+      "network": "solana:EtWTRABZaYq6iMfeYKouRu166VU2xqa1"
+    },
+    "task_id": "elr_0254ff72-de64-495b-a279-deee4af088e5",
+    "output_hash": "804c1ac2c528d63da6757f04034397858c907991c3c3cc368aa27ca57313af76",
+    "receipt_id": "8388ae53-7a19-41ed-a571-dd928a7ff74a",
+    "transaction_reference": "XUZFjtxNd8Zyxcs3f5nx3TZ6yncVQXHma1qAvJsDPKw7dTPRnbuW2nBSPJzNX3Gzuv3JnAeVfSScJPDabemgj67"
+  }
+}

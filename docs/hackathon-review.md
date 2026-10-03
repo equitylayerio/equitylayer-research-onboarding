@@ -33,7 +33,9 @@ pnpm typecheck
 ```
 
 The seller backend is not in this public repository. The current buyer requires a configured loopback seller.
-These tests use synthetic payment responses. A live payment demo is not yet available.
+These automated tests use synthetic payment responses.
+One separate local Devnet purchase settled on-chain. Read [the payment verification](2026-10-03-devnet-payment-verification.md) and its sanitized proof.
+The verification script called the buyer execution code directly. An AI-host-driven purchase demo remains separate work.
 Research purchases buy information. They do not buy securities.
 
 ## Source and provenance
@@ -42,6 +44,7 @@ Research purchases buy information. They do not buy securities.
 - [CI verification](https://github.com/equitylayerio/equitylayer-research-onboarding/actions/runs/37010627506)
 - [Independent publication QC](2026-10-02-publication-qc.md)
 - [Hosted execution verification](2026-10-02-hosted-verification.md)
+- [Devnet purchase verification](2026-10-03-devnet-payment-verification.md)
 
 EquityLayer existed before this hackathon. Repository publication is not evidence that all work began during the event.
 The submission must distinguish prior work from event-period changes. Organizer eligibility confirmation remains pending.
