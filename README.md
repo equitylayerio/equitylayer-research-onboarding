@@ -21,6 +21,7 @@ An optional [Solana research buyer](tools/x402-mcp-bridge/README.md) exposes one
 It requires a separately configured local seller, signer, and explicit human approval. Installing it does not enable payment.
 See the [release status](docs/release-status.md) for verified behavior and remaining gates.
 For a short product walkthrough, use the [hackathon review guide](docs/hackathon-review.md).
+Use the [wallet-free judge check](docs/judge-check.md) to verify MCP discovery and the existing Devnet payment.
 
 1. Open [the onboarding prompt](prompts/onboarding.md).
 2. Copy it into the AI tool that you already use.

@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "judge:check": "tsx src/judge-check.ts",
     "start": "tsx src/index.ts",
     "start:devnet-signer": "tsx src/devnet-signer.ts",
     "devnet-payment-smoke": "tsx src/devnet-payment-smoke.ts",
