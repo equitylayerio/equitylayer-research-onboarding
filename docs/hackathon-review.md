@@ -31,12 +31,15 @@ pnpm install --frozen-lockfile --ignore-scripts
 pnpm test
 pnpm typecheck
 pnpm judge:check --chain
+pnpm judge:check --mcp-proof --chain
 ```
 
 The seller backend is not in this public repository. The current buyer requires a configured loopback seller.
 The payment unit tests use synthetic responses. The [judge check](judge-check.md) reads the retained proof and an existing on-chain transaction.
 One separate local Devnet purchase settled on-chain. Read [the payment verification](2026-10-03-devnet-payment-verification.md) and its sanitized proof.
-The verification script called the buyer execution code directly. An AI-host-driven purchase demo remains separate work.
+That first script called the buyer execution code directly.
+A second approved purchase completed through an actual MCP stdio session. Read [the MCP purchase record](2026-10-03-mcp-purchase-verification.md).
+Codex orchestrated the SDK client. This is not evidence of a native Claude or Codex connector installation.
 Research purchases buy information. They do not buy securities.
 
 ## Source and provenance

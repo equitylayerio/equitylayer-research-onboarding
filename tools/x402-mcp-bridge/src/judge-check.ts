@@ -7,6 +7,7 @@ import { z } from "zod";
 import { P1A_AMOUNT_ATOMIC, P1A_ASSET, P1A_NETWORK, P1A_SYMBOLS, TOOL_NAME } from "./policy.js";
 
 export const HISTORICAL_TRANSACTION = "XUZFjtxNd8Zyxcs3f5nx3TZ6yncVQXHma1qAvJsDPKw7dTPRnbuW2nBSPJzNX3Gzuv3JnAeVfSScJPDabemgj67";
+export const MCP_TRANSACTION = "5WD3cjtfw8Mzww7KPieqpaNT3TGmhmtAaKpGXQULmsrNParFavM4bzbJcyDzHYcHrcftFg9ciMRzEg2iwrMvTvGD";
 const SELLER = "269BifgYuikBEby13nG7CB3sfCEUjLwyxpuY3PmLXw6P";
 const BUYER = "63SLWtHaXHFK4yFN85x6Y5MsD4VDoFMZ98Sk4yFF7JP1";
 const HASH = "804c1ac2c528d63da6757f04034397858c907991c3c3cc368aa27ca57313af76";
@@ -39,6 +40,31 @@ export function checkHistoricalProof(value: unknown): void {
   assert.deepEqual(proof.delivery.input_scope.symbols, [...P1A_SYMBOLS], "The historical scope does not match.");
 }
 
+export function checkMcpProof(value: unknown): void {
+  const task = "elr_662aeae2-20cd-4a9a-8c6a-aa888295edac";
+  const receipt = "7280e568-84e6-466c-9054-5e6e0bd71d98";
+  const hash = "6c481e903a14d8b6f28eb757b7af7571c802873aaf38271e8c0b3db42127b9ab";
+  const proof = z.object({
+    schema_version: z.literal("1.0"), kind: z.literal("equitylayer_mcp_devnet_purchase_proof"),
+    environment: z.literal("solana_devnet_local_only"),
+    protocol: z.object({ transport: z.literal("stdio"), calls: z.literal(1), events: z.tuple([
+      z.object({ method: z.literal("initialize"), success: z.literal(true) }),
+      z.object({ method: z.literal("tools/list"), names: z.tuple([z.literal(TOOL_NAME)]) }),
+      z.object({ method: z.literal("tools/call"), name: z.literal(TOOL_NAME), arguments: z.object({}).strict() }),
+      z.object({ method: z.literal("approval_page") }),
+      z.object({ method: z.literal("tools/call/result"), success: z.literal(true), task_id: z.literal(task), receipt_id: z.literal(receipt), output_hash: z.literal(hash), transaction_reference: z.literal(MCP_TRANSACTION) }),
+    ]) }),
+    payment: z.object({ amount_atomic: z.literal(P1A_AMOUNT_ATOMIC), network: z.literal(P1A_NETWORK), asset: z.literal(P1A_ASSET), seller: z.literal(SELLER), transaction_reference: z.literal(MCP_TRANSACTION), finalized: z.literal(true) }),
+    delivery: z.object({ task_id: z.literal(task), output_hash: z.literal(hash),
+      input_scope: z.object({ symbols: z.array(z.string()) }),
+      report_period: z.literal("2026-08"), prior_period: z.literal("2026-06"),
+      receipt: z.object({ status: z.literal("settled"), receipt_id: z.literal(receipt), transaction_reference: z.literal(MCP_TRANSACTION) }),
+    }),
+    checks: z.object({ purchase_tool_calls: z.literal(1), automatic_retries: z.literal(0) }),
+  }).parse(value);
+  assert.deepEqual(proof.delivery.input_scope.symbols, [...P1A_SYMBOLS], "The MCP purchase scope does not match.");
+}
+
 const tokenBalance = z.object({ accountIndex: z.number().int().nonnegative(), owner: z.string(), mint: z.string(),
   uiTokenAmount: z.object({ amount: z.string().regex(/^\d+$/), decimals: z.number().int() }) });
 const chainTransaction = z.object({
@@ -47,9 +73,9 @@ const chainTransaction = z.object({
   meta: z.object({ err: z.null(), preTokenBalances: z.array(tokenBalance), postTokenBalances: z.array(tokenBalance) }),
 });
 
-export function checkChainTransaction(value: unknown): void {
+export function checkChainTransaction(value: unknown, signature: typeof HISTORICAL_TRANSACTION | typeof MCP_TRANSACTION = HISTORICAL_TRANSACTION): void {
   const tx = chainTransaction.parse(value);
-  assert.equal(tx.transaction.signatures[0], HISTORICAL_TRANSACTION, "The transaction does not match.");
+  assert.equal(tx.transaction.signatures[0], signature, "The transaction does not match.");
   for (const [owner, expected] of [[BUYER, -50000n], [SELLER, 50000n]] as const) {
     const before = tx.meta.preTokenBalances.filter((b) => b.owner === owner && b.mint === P1A_ASSET);
     const after = tx.meta.postTokenBalances.filter((b) => b.owner === owner && b.mint === P1A_ASSET);
@@ -63,7 +89,7 @@ export function checkChainTransaction(value: unknown): void {
 }
 
 // This function permits only read requests to the fixed Devnet RPC endpoint.
-export async function checkHistoricalChain(fetchImpl: typeof fetch = fetch): Promise<void> {
+export async function checkHistoricalChain(fetchImpl: typeof fetch = fetch, signature: typeof HISTORICAL_TRANSACTION | typeof MCP_TRANSACTION = HISTORICAL_TRANSACTION): Promise<void> {
   async function rpc(method: string, params: unknown[]) {
     const response = await fetchImpl("https://api.devnet.solana.com", {
       method: "POST", redirect: "error", signal: AbortSignal.timeout(15_000),
@@ -77,8 +103,8 @@ export async function checkHistoricalChain(fetchImpl: typeof fetch = fetch): Pro
   }
   assert.equal(await rpc("getGenesisHash", []), "EtWTRABZaYq6iMfeYKouRu166VU2xqa1wcaWoxPkrZBG", "The RPC network is not Devnet.");
   const status = z.object({ value: z.tuple([z.object({ err: z.null(), confirmationStatus: z.literal("finalized") })]) });
-  status.parse(await rpc("getSignatureStatuses", [[HISTORICAL_TRANSACTION], { searchTransactionHistory: true }]));
-  checkChainTransaction(await rpc("getTransaction", [HISTORICAL_TRANSACTION, { encoding: "jsonParsed", commitment: "finalized", maxSupportedTransactionVersion: 0 }]));
+  status.parse(await rpc("getSignatureStatuses", [[signature], { searchTransactionHistory: true }]));
+  checkChainTransaction(await rpc("getTransaction", [signature, { encoding: "jsonParsed", commitment: "finalized", maxSupportedTransactionVersion: 0 }]), signature);
 }
 
 export async function checkMcpDiscovery(): Promise<string[]> {
@@ -105,13 +131,17 @@ export async function checkMcpDiscovery(): Promise<string[]> {
 
 async function main(): Promise<void> {
   const args = process.argv.slice(2);
-  assert(args.length === 0 || (args.length === 1 && args[0] === "--chain"), "Use no argument, or use --chain.");
-  const proof = JSON.parse(await readFile(new URL("../../../docs/evidence/2026-10-03-x402-devnet-payment-proof.json", import.meta.url), "utf8"));
-  checkHistoricalProof(proof);
+  assert(args.every(arg => ["--chain", "--mcp-proof"].includes(arg)) && new Set(args).size === args.length, "Use --chain, --mcp-proof, or both.");
+  const useMcp = args.includes("--mcp-proof");
+  const proofFile = useMcp ? "2026-10-03-mcp-devnet-payment-proof.json" : "2026-10-03-x402-devnet-payment-proof.json";
+  const proof = JSON.parse(await readFile(new URL(`../../../docs/evidence/${proofFile}`, import.meta.url), "utf8"));
+  if (useMcp) checkMcpProof(proof);
+  else checkHistoricalProof(proof);
+  console.log(`Proof: ${useMcp ? "MCP stdio purchase" : "Direct buyer execution"}`);
   console.log("PASS: Historical proof metadata matches the retained transaction and delivery identifiers.");
   console.log(`PASS: MCP initialization and tool discovery: ${(await checkMcpDiscovery()).join(", ")}`);
   if (args.includes("--chain")) {
-    await checkHistoricalChain();
+    await checkHistoricalChain(fetch, useMcp ? MCP_TRANSACTION : HISTORICAL_TRANSACTION);
     console.log("PASS: Devnet transaction finalized. Buyer: -0.05 USDC. Seller: +0.05 USDC.");
   } else {
     console.log("SKIP: Live Devnet verification. Use --chain to read the existing transaction.");

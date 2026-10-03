@@ -1,6 +1,7 @@
 # Release preparation status
 
-The public source release is published. One local Solana Devnet research purchase also settled.
+The public source release is published. Two separately authorized local Solana Devnet research purchases settled.
+The first used the buyer execution code directly. The second used MCP stdio.
 Neither result proves a completed hackathon submission or a mainnet payment.
 
 ## Product boundary
@@ -19,7 +20,7 @@ Research purchases and investment trades are different operations. Neither compo
 |---|---|
 | Research client | 22 automated tests. Two real calls each to begin and finalize against retained local MCP data. |
 | Dashboard import | Desktop and mobile replay preserves explicit user review before baseline acceptance. |
-| Solana buyer | 69 automated tests and typecheck. The original 67-test export also passed a standalone frozen-lockfile installation outside the private app. |
+| Solana buyer | 104 automated tests and typecheck, including the historical proof checker. The original 67-test export also passed a standalone frozen-lockfile installation outside the private app. |
 | Seller compatibility | The private application's real seller SDK challenge passes the buyer policy, including header serialization. |
 
 Local verification used Node.js 25.2.1 and pnpm 9.15.4.
@@ -29,8 +30,9 @@ The research replay draft was hand-authored to report missing evidence. Its resu
 The automated payment tests use synthetic signing and settlement responses.
 A separate authorized test produced a finalized Devnet transaction and a matching durable delivery.
 See [the payment verification and proof](2026-10-03-devnet-payment-verification.md).
+See [the later MCP purchase verification](2026-10-03-mcp-purchase-verification.md) for the end-to-end protocol test.
 
-The buyer source matches EquityLayer application commit `ae2e160`.
+The original buyer export matches EquityLayer application commit `ae2e160`. The public repository later added read-only judge verification commands.
 The export contains only the buyer's source, tests, dependency lockfile, package configuration, and README.
 It contains no seller database, wallet key, private research, or environment file.
 
@@ -52,5 +54,5 @@ The research client can use the hosted MCP, but deployed versions can differ. Us
 The October 2 production deployment resolved the earlier missing-tool failure. Two hosted begin/finalize checks and a retained filing outcome check passed. See [hosted verification](2026-10-02-hosted-verification.md).
 Run `npm run research -- doctor` before the demo. A passing discovery check does not verify research execution or payment.
 The Solana buyer only accepts the fixed loopback seller at port 3101. It is not a public multi-seller payment client.
-The successful test called the buyer execution code directly, not through an AI host's MCP session.
+The later test used a Codex-orchestrated SDK MCP stdio client. It did not test native Claude or Codex connector installation.
 Buyer pending state is process-local. Do not restart the process to repeat a purchase with uncertain settlement.

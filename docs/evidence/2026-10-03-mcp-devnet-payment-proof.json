@@ -1,0 +1,108 @@
+{
+  "schema_version": "1.0",
+  "kind": "equitylayer_mcp_devnet_purchase_proof",
+  "environment": "solana_devnet_local_only",
+  "host": "Codex-orchestrated MCP SDK client over stdio. Not a native Claude or Codex connector installation.",
+  "approval": "User authorized one 0.05 Devnet USDC purchase in chat. The operator confirmed the unchanged approval page.",
+  "protocol": {
+    "started_at": "2026-10-03T01:14:16.639Z",
+    "transport": "stdio",
+    "calls": 1,
+    "events": [
+      {
+        "method": "initialize",
+        "success": true,
+        "server": {
+          "name": "equitylayer-x402-p1a-bridge",
+          "version": "0.1.0"
+        }
+      },
+      {
+        "method": "tools/list",
+        "names": [
+          "request_taiwan_monthly_revenue_monitor_v1"
+        ]
+      },
+      {
+        "method": "tools/call",
+        "name": "request_taiwan_monthly_revenue_monitor_v1",
+        "arguments": {},
+        "started_at": "2026-10-03T01:14:17.009Z"
+      },
+      {
+        "method": "approval_page",
+        "displayed_at": "2026-10-03T01:14:17.028Z"
+      },
+      {
+        "method": "tools/call/result",
+        "success": true,
+        "task_id": "elr_662aeae2-20cd-4a9a-8c6a-aa888295edac",
+        "receipt_id": "7280e568-84e6-466c-9054-5e6e0bd71d98",
+        "transaction_reference": "5WD3cjtfw8Mzww7KPieqpaNT3TGmhmtAaKpGXQULmsrNParFavM4bzbJcyDzHYcHrcftFg9ciMRzEg2iwrMvTvGD",
+        "output_hash": "6c481e903a14d8b6f28eb757b7af7571c802873aaf38271e8c0b3db42127b9ab",
+        "completed_at": "2026-10-03T01:15:00.699Z"
+      }
+    ]
+  },
+  "payment": {
+    "payment_identifier": "elr_30f99b69deba4213a67d1f5a21c24930",
+    "amount_atomic": "50000",
+    "network": "solana:EtWTRABZaYq6iMfeYKouRu166VU2xqa1",
+    "asset": "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU",
+    "seller": "269BifgYuikBEby13nG7CB3sfCEUjLwyxpuY3PmLXw6P",
+    "transaction_reference": "5WD3cjtfw8Mzww7KPieqpaNT3TGmhmtAaKpGXQULmsrNParFavM4bzbJcyDzHYcHrcftFg9ciMRzEg2iwrMvTvGD",
+    "finalized": true,
+    "slot": 506825300,
+    "block_time": 1790990099,
+    "fee_lamports": 10001,
+    "deltas": [
+      {
+        "owner": "63SLWtHaXHFK4yFN85x6Y5MsD4VDoFMZ98Sk4yFF7JP1",
+        "before_atomic": "19950000",
+        "after_atomic": "19900000",
+        "change_atomic": "-50000"
+      },
+      {
+        "owner": "269BifgYuikBEby13nG7CB3sfCEUjLwyxpuY3PmLXw6P",
+        "before_atomic": "20050000",
+        "after_atomic": "20100000",
+        "change_atomic": "50000"
+      }
+    ]
+  },
+  "delivery": {
+    "task_id": "elr_662aeae2-20cd-4a9a-8c6a-aa888295edac",
+    "output_hash": "6c481e903a14d8b6f28eb757b7af7571c802873aaf38271e8c0b3db42127b9ab",
+    "receipt": {
+      "status": "settled",
+      "receipt_id": "7280e568-84e6-466c-9054-5e6e0bd71d98",
+      "settled_at": "2026-10-03T01:15:00.681Z",
+      "transaction_reference": "5WD3cjtfw8Mzww7KPieqpaNT3TGmhmtAaKpGXQULmsrNParFavM4bzbJcyDzHYcHrcftFg9ciMRzEg2iwrMvTvGD"
+    },
+    "capability_id": "taiwan-monthly-revenue-monitor",
+    "capability_version": "v1",
+    "input_scope": {
+      "symbols": [
+        "2383.TW",
+        "3037.TW",
+        "8046.TW"
+      ],
+      "source_url": "https://openapi.twse.com.tw/v1/opendata/t187ap05_L",
+      "baseline_period": "2026-06"
+    },
+    "report_period": "2026-08",
+    "prior_period": "2026-06"
+  },
+  "checks": {
+    "full_output_hash_recomputed": true,
+    "database_matches_mcp_result": true,
+    "new_database_records": 1,
+    "purchase_tool_calls": 1,
+    "automatic_retries": 0
+  },
+  "limits": [
+    "The full research payload is private. Public metadata cannot independently establish the content hash.",
+    "No mainnet, securities trade, production seller deployment, or native AI client installation was tested.",
+    "This attempt did not repeat delivery retrieval. The prior direct-execution test covers that separately."
+  ]
+}

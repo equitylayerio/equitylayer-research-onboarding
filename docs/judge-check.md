@@ -10,10 +10,12 @@ cd tools/x402-mcp-bridge
 pnpm install --frozen-lockfile --ignore-scripts
 pnpm judge:check
 pnpm judge:check --chain
+pnpm judge:check --mcp-proof --chain
 ```
 
 The first command checks retained metadata and MCP discovery without network requests.
 The `--chain` option also reads the existing transaction from the fixed Solana Devnet RPC endpoint.
+Add `--mcp-proof` to select the later purchase made through MCP stdio. Without it, the command checks the earlier direct-execution purchase.
 It checks the network, finalized status, transaction signature, USDC mint, and both balance changes.
 No wallet, seller backend, signer, API key, or test tokens are required.
 Exit code 1 means verification failed or the RPC result is unavailable. It does not mean a new payment failed.
@@ -21,6 +23,7 @@ Exit code 1 means verification failed or the RPC result is unavailable. It does 
 Expected live output:
 
 ```text
+Proof: Direct buyer execution
 PASS: Historical proof metadata matches the retained transaction and delivery identifiers.
 PASS: MCP initialization and tool discovery: request_taiwan_monthly_revenue_monitor_v1
 PASS: Devnet transaction finalized. Buyer: -0.05 USDC. Seller: +0.05 USDC.
@@ -31,8 +34,11 @@ The public proof contains metadata only. This check cannot recompute the complet
 ## Evidence limits
 
 - The live check verifies an existing transaction. It does not reproduce a new purchase.
-- Discovery through MCP and payment through the buyer execution code were tested separately.
-- The proof metadata reports a delivery and duplicate retrieval. The blockchain does not verify the research content or its quality.
+- The first payment used the buyer execution code directly. A second payment used a Codex-orchestrated MCP SDK client over stdio.
+- The second record contains a script-generated event transcript, not an independently captured JSON-RPC wire log.
+- The MCP purchase does not establish native Claude or Codex connector installation. Read [the new verification record](2026-10-03-mcp-purchase-verification.md).
+- The earlier direct-execution proof reports duplicate retrieval. The MCP purchase proof does not test duplicate retrieval.
+- The blockchain does not verify the research content or its quality.
 - The public proof omits the full research payload. The private verification record describes the independent hash recomputation.
 - The seller requires a private local backend. The public repository alone cannot serve a new paid research request.
 - The historical pack covers August 2026 against a June baseline. It is not a claim of current research.
