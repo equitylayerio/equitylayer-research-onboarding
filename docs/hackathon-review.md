@@ -30,10 +30,11 @@ cd tools/x402-mcp-bridge
 pnpm install --frozen-lockfile --ignore-scripts
 pnpm test
 pnpm typecheck
+pnpm judge:check --chain
 ```
 
 The seller backend is not in this public repository. The current buyer requires a configured loopback seller.
-These automated tests use synthetic payment responses.
+The payment unit tests use synthetic responses. The [judge check](judge-check.md) reads the retained proof and an existing on-chain transaction.
 One separate local Devnet purchase settled on-chain. Read [the payment verification](2026-10-03-devnet-payment-verification.md) and its sanitized proof.
 The verification script called the buyer execution code directly. An AI-host-driven purchase demo remains separate work.
 Research purchases buy information. They do not buy securities.
@@ -47,4 +48,6 @@ Research purchases buy information. They do not buy securities.
 - [Devnet purchase verification](2026-10-03-devnet-payment-verification.md)
 
 EquityLayer existed before this hackathon. Repository publication is not evidence that all work began during the event.
-The submission must distinguish prior work from event-period changes. Organizer eligibility confirmation remains pending.
+The submission must distinguish prior work from event-period changes.
+The [official FAQ](https://colosseum.com/hackathon) permits disclosed pre-existing code and limits judging to event-period work.
+The founder must still confirm personal, team, and funding eligibility.
