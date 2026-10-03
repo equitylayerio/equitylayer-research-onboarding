@@ -14,6 +14,9 @@ The standard research client reads research plans and saves results for a user's
 The optional Solana buyer purchases one fixed monthly-revenue update, after separate human approval.
 Research purchases and investment trades are different operations. Neither component places an investment trade.
 
+The hosted application also provides indicative Jupiter quotes and a read-only NVDAx transaction checker.
+It does not submit orders. See [trading production verification](2026-10-03-trading-production-verification.md).
+
 ## Verified locally
 
 | Component | Evidence |

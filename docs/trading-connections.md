@@ -9,7 +9,7 @@ The current application has one checked mapping: NVDA to NVDAx on Solana mainnet
 NVDAx is a tokenized product, not an NVIDIA share. Check issuer and venue eligibility before use.
 The wider research map does not imply trading support for every company.
 
-The local implementation adds this sequence:
+The hosted application adds this sequence:
 
 1. Select reviewed research in the company page's Trade options.
 2. Select a side and amount. Read an indicative quote.
@@ -22,8 +22,9 @@ The receipt checker reads finalized mainnet data. It currently supports direct J
 Unsupported routes return an unverified result. Do not repeat a trade because a check fails.
 The local record does not prove wallet ownership or referral attribution. It does not update your holdings automatically.
 
-The new receipt checker is a local implementation candidate, not a verified production release.
-Check tool discovery before use. Its MCP tool is `check_trading_receipt`.
+The receipt checker is deployed at `https://equitylayer.io`. Production HTTP and MCP discovery checks passed on October 3, 2026.
+See [production verification](2026-10-03-trading-production-verification.md) for the checks and their limits.
+Its MCP tool is `check_trading_receipt`.
 It accepts `instrument_id`, `wallet`, `signature`, and `handoff_at`. It cannot place an order.
 
 ## Robinhood: separate broker connection
