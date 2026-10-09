@@ -4,12 +4,13 @@ import { connect, endpointUrl } from "./mcp.mjs";
 import { inspectCompatibility } from "./compatibility.mjs";
 
 const TOOLS = { status: "get_service_status", discover: "discover_theses", begin: "begin_research", finalize: "finalize_research",
-  company: "resolve_company_tracker", update: "get_research_update", instrument: "resolve_trading_instrument" };
+  company: "resolve_company_tracker", update: "get_research_update", instrument: "resolve_trading_instrument", evidence: "get_instrument_evidence" };
 const HELP = `EquityLayer research client (Node.js 22+)
   node client/cli.mjs doctor|status|tools|discover [--endpoint URL]
   node client/cli.mjs begin --input scope.json [--out plan.json] [--endpoint URL]
   node client/cli.mjs finalize --input public-draft.json --public-data --out result.json [--endpoint URL]
   node client/cli.mjs instrument --input symbol.json [--endpoint URL]
+  node client/cli.mjs evidence --input examples/robinhood-evidence.json [--endpoint URL]
   node client/cli.mjs company|update --input request.json [--endpoint URL]
 
 Default endpoint: https://equitylayer.io/mcp
@@ -35,8 +36,8 @@ export function parseArgs(args) {
     result[key.slice(2)] = rest[++index];
   }
   endpointUrl(result.endpoint);
-  const needsInput = ["begin", "finalize", "instrument", "company", "update"].includes(command);
-  if (needsInput !== Boolean(result.input)) throw new Error("Begin, finalize, instrument, company, and update require --input. Other commands do not accept input.");
+  const needsInput = ["begin", "finalize", "instrument", "evidence", "company", "update"].includes(command);
+  if (needsInput !== Boolean(result.input)) throw new Error("Begin, finalize, instrument, evidence, company, and update require --input. Other commands do not accept input.");
   if (command === "finalize" && (!result.publicData || !result.out)) throw new Error("Finalize requires --public-data and --out. Do not send private research.");
   if (result.publicData && command !== "finalize") throw new Error("Use --public-data only with finalize.");
   return result;
@@ -52,7 +53,15 @@ export async function run(args, { connectClient = connect, stdout = value => pro
     input = JSON.parse(await readFile(options.input, "utf8"));
     if (!input || typeof input !== "object" || Array.isArray(input)) throw new Error("The input must be a JSON object.");
   }
-  const client = await connectClient(options.endpoint);
+  if (options.command === "evidence") {
+    const keys = Object.keys(input);
+    if (keys.length !== 2 || !keys.includes("symbol") || !keys.includes("network")
+      || typeof input.symbol !== "string" || !input.symbol.trim() || input.symbol.length > 32
+      || !["solana-mainnet", "robinhood-mainnet"].includes(input.network)) {
+      throw new Error("Use a company symbol and a supported network only. Do not supply wallet or order data.");
+    }
+  }
+  const client = await connectClient(options.endpoint, { timeoutMs: 25_000 });
   try {
     let output;
     if (options.command === "doctor") {
@@ -60,10 +69,11 @@ export async function run(args, { connectClient = connect, stdout = value => pro
     } else if (options.command === "tools") {
       output = await client.tools();
     } else {
-      if (["begin", "finalize", "instrument"].includes(options.command)) {
+      if (["begin", "finalize", "instrument", "evidence"].includes(options.command)) {
         const listing = await client.tools();
         const report = inspectCompatibility(options.endpoint, listing);
-        const available = options.command === "instrument" ? report.instrument_mapping_available : report.research_tools_available;
+        const available = options.command === "evidence" ? report.chain_evidence_available
+          : options.command === "instrument" ? report.instrument_mapping_available : report.research_tools_available;
         if (!available) throw new Error("This server lacks required tools. Run doctor. Do not send the research draft to this server.");
       }
       output = await client.call(TOOLS[options.command], input);
@@ -79,7 +89,8 @@ export async function run(args, { connectClient = connect, stdout = value => pro
       stdout(`${JSON.stringify({ saved: options.out, command: options.command, accepted_baseline: false,
         ...(options.command === "finalize" ? { warnings: output.warnings ?? [], delivery: output.delivery } : {}) })}\n`);
     } else { stdout(json); }
-    return { exitCode: options.command === "doctor" && !output.research_tools_available ? 2 : 0 };
+    return { exitCode: (options.command === "doctor" && !output.research_tools_available)
+      || (options.command === "evidence" && !["checked", "available"].includes(output.status)) ? 2 : 0 };
   } finally { await client.close(); }
 }
 

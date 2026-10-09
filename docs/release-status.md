@@ -17,6 +17,16 @@ Research purchases and investment trades are different operations. Neither compo
 The hosted application also provides indicative Jupiter quotes and a read-only NVDAx transaction checker.
 It does not submit orders. See [trading production verification](2026-10-03-trading-production-verification.md).
 
+## October 9 candidate verification
+
+The Robinhood Chain candidate passed two live NVDA contract checks. It uses the same company research page and a separate read-only connection.
+The candidate public client passed 25 tests. The Solana buyer passed 104 tests and type checking.
+Both historical Devnet purchases remained finalized in fresh wallet-free checks. No new payment or transaction occurred.
+
+The hosted MCP exposes the research tools, but it does not yet expose `get_instrument_evidence`.
+The production evidence endpoint returned HTTP 404 on October 9. The Robinhood backend and client changes still require release.
+Do not treat the candidate instructions as evidence of a deployed integration.
+
 ## Verified locally
 
 | Component | Evidence |

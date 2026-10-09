@@ -42,6 +42,13 @@ A second approved purchase completed through an actual MCP stdio session. Read [
 Codex orchestrated the SDK client. This is not evidence of a native Claude or Codex connector installation.
 Research purchases buy information. They do not buy securities.
 
+## Review the Robinhood Chain component
+
+Use [the wallet-free chain check](chain-review.md). The same company research page lets you select the connection.
+The MCP tool reads canonical contract identity and corporate-action state from Robinhood Chain mainnet.
+This does not obtain a price, submit an order, or authenticate with Robinhood's broker.
+The product flow stays the same; each connection exposes only its verified capabilities.
+
 ## Source and provenance
 
 - [Public release PR](https://github.com/equitylayerio/equitylayer-research-onboarding/pull/1)

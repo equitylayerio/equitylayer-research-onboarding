@@ -2,7 +2,7 @@
 export const PROTOCOL = "2025-03-26";
 const MAX_BYTES = 2_000_000;
 const TOOL_NAMES = new Set([
-  "get_service_status", "begin_research", "finalize_research", "resolve_trading_instrument",
+  "get_service_status", "begin_research", "finalize_research", "resolve_trading_instrument", "get_instrument_evidence",
   "resolve_company_tracker", "get_research_update", "discover_theses",
 ]);
 

@@ -1,0 +1,68 @@
+{
+  "schema_version": "1.0",
+  "check": "candidate_module_live_read_only",
+  "network": "robinhood-mainnet",
+  "chain_id": 4663,
+  "symbol": "NVDA",
+  "contract": "0xd0601CE157Db5bdC3162BbaC2a2C8aF5320D9EEC",
+  "registry": "https://api.robinhood.com/rhj/assets",
+  "rpc": "https://rpc.mainnet.chain.robinhood.com",
+  "attempts": [
+    {
+      "status": "checked",
+      "block_number": "84356420",
+      "block_hash": "0x7de9fcb95e63c94bd20a5deaeb01ed7f91f0ec1b37735523a2b21fd834a5d360",
+      "block_time": "2026-10-09T18:08:15.000Z",
+      "observed_at": "2026-10-09T18:08:17.843Z",
+      "expires_at": "2026-10-09T18:08:47.843Z",
+      "decimals": 18,
+      "ui_multiplier": "1.000775159164630595",
+      "oracle_paused": false
+    },
+    {
+      "status": "checked",
+      "block_number": "84356440",
+      "block_hash": "0xc6de7ec387aa0f9f30f6e226d307b22e1c56c2035e75b8143e90c76c3a1dcbc0",
+      "block_time": "2026-10-09T18:08:17.000Z",
+      "observed_at": "2026-10-09T18:08:19.429Z",
+      "expires_at": "2026-10-09T18:08:49.429Z",
+      "decimals": 18,
+      "ui_multiplier": "1.000775159164630595",
+      "oracle_paused": false
+    }
+  ],
+  "mcp_checks": {
+    "client": "public research CLI",
+    "endpoint": "http://127.0.0.1:3195/mcp",
+    "tool": "get_instrument_evidence",
+    "attempts": [
+      {
+        "status": "checked",
+        "block_number": "84358691",
+        "block_hash": "0x1954b2c3b0ac4ea12635740dc332fc15b9d1eededb9bb96c075ebe42f93c7ed5",
+        "observed_at": "2026-10-09T18:12:08.816Z",
+        "expires_at": "2026-10-09T18:12:38.816Z",
+        "ui_multiplier": "1.000775159164630595",
+        "oracle_paused": false
+      },
+      {
+        "status": "checked",
+        "block_number": "84358714",
+        "block_hash": "0x32ee597cb08b5deaf2b5a9b6dd813da2fd480bc28d548f19b586f43dfc45b246",
+        "observed_at": "2026-10-09T18:12:10.737Z",
+        "expires_at": "2026-10-09T18:12:40.737Z",
+        "ui_multiplier": "1.000775159164630595",
+        "oracle_paused": false
+      }
+    ]
+  },
+  "finality": "latest_not_finalized",
+  "execution_supported": false,
+  "transaction_submitted": false,
+  "limits": [
+    "Historical output. The evidence is expired.",
+    "This record does not prove a deployed HTTP or MCP integration.",
+    "This record does not verify price, liquidity, eligibility, legal rights, or a trade.",
+    "The operator retained these outputs. This is not an independent wire capture."
+  ]
+}
