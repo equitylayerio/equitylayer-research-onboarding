@@ -13,9 +13,9 @@ The research question, sources, result, and local review stay the same when the 
 
 Use Node.js 22 or later. No wallet, API key, or payment is needed.
 On October 9, the candidate passed two direct NVDA checks and two public-client MCP checks against real chain data.
-The hosted MCP did not yet expose this tool.
-Publication and deployment remain pending. The default command below stops if the hosted service lacks the tool.
-Use the local command to review the candidate before deployment.
+Later that day, the release deployed. Hosted HTTP and MCP checks returned `checked`, and desktop/mobile expiry, retry, and connection-switch checks passed.
+The default command below uses the hosted MCP. It first checks that the tool exists.
+See [production release status](release-status.md) for the checked scope and limits.
 See [the retained October 9 reads](evidence/2026-10-09-robinhood-read-checks.json).
 Those outputs are expired historical evidence. They are not a current quote or a production deployment check.
 
