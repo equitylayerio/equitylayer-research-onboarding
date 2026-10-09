@@ -13,6 +13,7 @@ export function inspectCompatibility(endpoint, listing) {
     research_tools_available: missing.length === 0,
     missing_research_tools: missing,
     instrument_mapping_available: available.has("resolve_trading_instrument"),
+    chain_evidence_available: available.has("get_instrument_evidence"),
     research_execution_verified: false,
     payment_verified: false,
     next_step: missing.length

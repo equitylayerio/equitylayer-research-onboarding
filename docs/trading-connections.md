@@ -27,7 +27,15 @@ See [production verification](2026-10-03-trading-production-verification.md) for
 Its MCP tool is `check_trading_receipt`.
 It accepts `instrument_id`, `wallet`, `signature`, and `handoff_at`. It cannot place an order.
 
-## Robinhood: separate broker connection
+## Robinhood Chain: same research, read-only evidence
+
+The company page's connection selector adds Robinhood Chain beside Solana / Jupiter.
+`get_instrument_evidence` reads the canonical token registry and contract state at one latest block.
+It checks network 4663, deployed code, symbol, decimals, UI multiplier, oracle pause flag, and the block hash.
+This is not finalized evidence, a price quote, or a trade. No wallet or broker account is needed.
+Use [the chain judge check](chain-review.md) for the command, proof, and limits.
+
+## Robinhood broker: separate, not implemented
 
 Robinhood publishes an official trading MCP endpoint:
 
@@ -61,7 +69,8 @@ Crypto World's Fair is multi-chain. Section 14 of its rules lists Solana, Tempo,
 The rules require integration with the relevant chain for its track.
 Robinhood's broker MCP is not Robinhood Chain. Adding the broker connector alone does not establish eligibility for that chain's track.
 
-Use Solana for the current entry. Keep other execution connections separate from the research product.
+Use Solana for the demonstrated paid research flow. Robinhood Chain adds a separate read-only integration to the same research product.
+Confirm the selected track with the organizer; the integration does not guarantee eligibility.
 The verified Devnet USDC purchase bought research. It did not buy tokenized equity.
 No referral fee or commission is enabled by this guide.
 

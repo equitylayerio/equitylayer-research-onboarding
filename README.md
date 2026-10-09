@@ -22,7 +22,8 @@ It requires a separately configured local seller, signer, and explicit human app
 See the [release status](docs/release-status.md) for verified behavior and remaining gates.
 For a short product walkthrough, use the [hackathon review guide](docs/hackathon-review.md).
 Use the [wallet-free judge check](docs/judge-check.md) to verify MCP discovery and the existing Devnet payment.
-See [trading connections](docs/trading-connections.md) for the Jupiter handoff and the separate Robinhood MCP plan. Research payments do not authorize investment trades.
+See [trading connections](docs/trading-connections.md) for the Jupiter handoff, Robinhood Chain evidence, and the separate broker MCP plan. Research payments do not authorize investment trades.
+Use [the multi-chain judge check](docs/chain-review.md) to read canonical Robinhood Chain contract evidence without a wallet.
 
 1. Open [the onboarding prompt](prompts/onboarding.md).
 2. Copy it into the AI tool that you already use.
