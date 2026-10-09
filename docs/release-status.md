@@ -17,15 +17,21 @@ Research purchases and investment trades are different operations. Neither compo
 The hosted application also provides indicative Jupiter quotes and a read-only NVDAx transaction checker.
 It does not submit orders. See [trading production verification](2026-10-03-trading-production-verification.md).
 
-## October 9 candidate verification
+## October 9 production verification
+
+The backend and public-client release are published. [Public PR 9](https://github.com/equitylayerio/equitylayer-research-onboarding/pull/9) merged into `main`.
+The hosted HTTP endpoint returned `checked` for NVDA at block `84501766`; the public client completed a hosted MCP read at block `84501815`.
+An independent MCP read also returned `checked` at block `84502545`.
+Hosted desktop and mobile checks passed, including evidence expiry, explicit retry, and switching back to Solana. No order, wallet signature, or payment occurred.
+These observations are historical. Run a new read when you need current evidence; it expires after at most 30 seconds.
+
+## Earlier October 9 candidate verification
 
 The Robinhood Chain candidate passed two live NVDA contract checks. It uses the same company research page and a separate read-only connection.
 The candidate public client passed 25 tests. The Solana buyer passed 104 tests and type checking.
 Both historical Devnet purchases remained finalized in fresh wallet-free checks. No new payment or transaction occurred.
 
-The hosted MCP exposes the research tools, but it does not yet expose `get_instrument_evidence`.
-The production evidence endpoint returned HTTP 404 on October 9. The Robinhood backend and client changes still require release.
-Do not treat the candidate instructions as evidence of a deployed integration.
+Before the deployment, hosted MCP did not expose `get_instrument_evidence`, and the evidence endpoint returned HTTP 404. Those earlier results are superseded by the production checks above.
 
 ## Verified locally
 
