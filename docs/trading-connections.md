@@ -9,11 +9,11 @@ The current application has one checked mapping: NVDA to NVDAx on Solana mainnet
 NVDAx is a tokenized product, not an NVIDIA share. Check issuer and venue eligibility before use.
 The wider research map does not imply trading support for every company.
 
-The hosted application adds this sequence:
+The October 10 local candidate uses this sequence. Its simplified menu has not been verified on the hosted release:
 
-1. Select reviewed research in the company page's Trade options.
-2. Select a side and amount. Read an indicative quote.
-3. Continue to Jupiter. Review and confirm the final order there.
+1. Open the company page's Trade options. Select research attribution if needed.
+2. Continue directly to Jupiter, or optionally preview an indicative quote with a selected side and amount.
+3. Review and confirm the final order at the venue. An EquityLayer quote does not authorize it.
 4. Return to EquityLayer. Enter the public wallet address and transaction signature.
 5. Check the transaction. Save the chain evidence beside the original research handoff.
 
@@ -29,13 +29,15 @@ It accepts `instrument_id`, `wallet`, `signature`, and `handoff_at`. It cannot p
 
 ## Robinhood Chain: same research, read-only evidence
 
-The company page's connection selector adds Robinhood Chain beside Solana / Jupiter.
+The October 10 candidate removes Robinhood Chain from the trade selector. Use the CLI or MCP for this read-only check. The older October 9 production UI observations remain historical release evidence.
 `get_instrument_evidence` reads the canonical token registry and contract state at one latest block.
 It checks network 4663, deployed code, symbol, decimals, UI multiplier, oracle pause flag, and the block hash.
 This is not finalized evidence, a price quote, or a trade. No wallet or broker account is needed.
 Use [the chain judge check](chain-review.md) for the command, proof, and limits.
 
-## Robinhood broker: separate, not implemented
+## Robinhood broker: caller-owned candidate handoff
+
+The local candidate supplies the official connector link and a research prompt through Robinhood / My AI (MCP). A local quote importer accepts caller-provided quote files. It does not fetch quotes or submit orders itself. These candidate UI changes are not a verified production release.
 
 Robinhood publishes an official trading MCP endpoint:
 

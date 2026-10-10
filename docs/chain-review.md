@@ -42,12 +42,11 @@ This demo uses Robinhood's rate-limited public RPC, which its documentation does
 HTTP and MCP share a per-server-instance limit of 15 checks per minute. It is not a per-user allowance or a distributed rate limit.
 An unavailable read returns exit code 2. This can reflect rate limits, provider failure, or unsupported coverage. Do not retry a trade.
 
-## Dashboard
+## Dashboard and candidate status
 
-Workspace → a company → Trade options → Connection.
-Choose Solana / Jupiter or Robinhood Chain read-only. The research stays on the same page.
-For Robinhood Chain, choose **Check chain evidence**. There is no buy button or wallet request.
-This is not Robinhood's broker Trading MCP. Broker authentication and orders remain separate.
+The October 10 local candidate removes Robinhood Chain from the company trade menu. Use the command above for its read-only evidence. The HTTP/MCP tool remains available in production.
+
+The candidate menu contains Solana / Jupiter and Robinhood / My AI (MCP). The latter is a caller-owned broker handoff, not the Robinhood Chain integration. Live broker authentication, quote retrieval, and orders remain unverified. The candidate menu has not been verified on the hosted release.
 
 ## Submission boundary
 
