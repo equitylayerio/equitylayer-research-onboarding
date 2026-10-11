@@ -6,6 +6,9 @@ Neither result proves a completed hackathon submission or a mainnet payment.
 
 ## October 11 repair candidate
 
+This section records the checks before candidate publication. It does not report the current GitHub or production state.
+Check the default branch and its latest CI for source publication. Check the hosted deployment separately.
+
 The client candidate adds safe validation paths and retained Pack version discovery. Its first repair passed 28 tests.
 The next local repair supports the SDK's flattened field errors. Both text formats require a known tool name.
 The full client suite now passes 30 tests. An independent reviewer repeated all 30 tests and checked the parser boundary.
@@ -13,7 +16,7 @@ Two calls with an invalid stage returned only `stage_id`, without the raw error 
 The onboarding instructions now preserve the returned Pack version through finalize and require review before baseline acceptance.
 Missing current evidence keeps the previous baseline. A retained-version comparison does not check new official releases.
 
-These changes belong to the candidate branch, not the default `main` release. They do not establish a new backend deployment.
+These changes were on the candidate branch during these checks. These checks do not establish a new backend deployment.
 Hosted tool discovery passed on October 11, and two read-only version queries returned August 2026.
 Those reads do not verify the unpublished backend repairs, native AI connectors, research quality, payment, or a completed submission.
 
