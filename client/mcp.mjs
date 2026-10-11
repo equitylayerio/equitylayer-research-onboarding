@@ -25,9 +25,22 @@ function toolError(response, fallback) {
     const text = response.content?.find(item => item.type === "text")?.text;
     // Read only SDK validation paths. Do not display source text or remote messages.
     const prefix = "Input validation error: Invalid arguments for tool ";
-    const start = typeof text === "string" && text.includes(prefix) ? text.indexOf("[", text.indexOf(prefix)) : -1;
-    if (start >= 0) {
-      try { output = { errors: JSON.parse(text.slice(start)) }; } catch { /* Keep the safe generic error. */ }
+    if (typeof text === "string" && text.includes(prefix)) {
+      const detail = text.slice(text.indexOf(prefix) + prefix.length);
+      const separator = detail.indexOf(": ");
+      const name = detail.slice(0, separator);
+      if (separator >= 0 && TOOL_NAMES.has(name)) {
+        const fields = detail.slice(separator + 2);
+        const start = fields.indexOf("[");
+        if (start >= 0) {
+          try { output = { errors: JSON.parse(fields.slice(start)) }; } catch { /* Keep the safe generic error. */ }
+        }
+        if (output === response) {
+          // Some SDK versions return a field label instead of a JSON issue array.
+          const path = fieldPath(fields.split(": ")[0]);
+          if (path) output = { errors: [{ path }] };
+        }
+      }
     }
   }
   const paths = [...new Set((Array.isArray(output?.errors) ? output.errors : []).slice(0, 30)

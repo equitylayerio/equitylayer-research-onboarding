@@ -149,6 +149,40 @@ test("baseline errors provide a bounded recovery command", async () => {
   await client.close();
 });
 
+test("flattened SDK validation errors expose only a permitted leading field", async () => {
+  for (const [detail, expected] of [
+    ["begin_research: stage_id: Invalid option with private details", ["stage_id"]],
+    ["begin_research: watch_id: Invalid UUID with private details", ["watch_id"]],
+    ["begin_research: symbols[0]: Invalid value with private details", ["symbols[0]"]],
+    ["begin_research: secret_credentials: private details", []],
+    ["unknown_tool: stage_id: private details", []],
+  ]) {
+    const client = await connect("http://localhost/mcp", fakeServer({}, { toolResponse: {
+      isError: true, content: [{ type: "text", text: `Input validation error: Invalid arguments for tool ${detail}` }],
+    } }));
+    await assert.rejects(client.call("begin_research"), error => {
+      assert.deepEqual(error.fieldPaths, expected);
+      assert.doesNotMatch(error.message, /private|secret_credentials|unknown_tool|Invalid option/);
+      return true;
+    });
+    await client.close();
+  }
+});
+
+test("JSON SDK validation errors reject unknown tool names before reading paths", async () => {
+  for (const name of ["unknown_tool", "secret_credentials"]) {
+    const client = await connect("http://localhost/mcp", fakeServer({}, { toolResponse: {
+      isError: true, content: [{ type: "text", text: `Input validation error: Invalid arguments for tool ${name}: [{"path":["stage_id"],"message":"private details"}]` }],
+    } }));
+    await assert.rejects(client.call("begin_research"), error => {
+      assert.deepEqual(error.fieldPaths, []);
+      assert.doesNotMatch(error.message, /stage_id|private|unknown_tool|secret_credentials/);
+      return true;
+    });
+    await client.close();
+  }
+});
+
 test("the client permits read-only Pack discovery and retained versions", async () => {
   const client = await connect("http://localhost/mcp", fakeServer({ ok: true }));
   for (const name of ["list_research_packs", "get_research_pack_versions"]) assert.equal((await client.call(name)).ok, true);
