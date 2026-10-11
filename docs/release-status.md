@@ -4,6 +4,21 @@ The public source release is published. Two separately authorized local Solana D
 The first used the buyer execution code directly. The second used MCP stdio.
 Neither result proves a completed hackathon submission or a mainnet payment.
 
+## October 11 local repair candidate
+
+The client candidate adds safe validation paths and retained Pack version discovery. It passed 28 tests.
+The onboarding instructions now preserve the returned Pack version through finalize and require review before baseline acceptance.
+Missing current evidence keeps the previous baseline. A retained-version comparison does not check new official releases.
+
+These changes are local and unpublished. Hosted tool discovery passed on October 11, and two read-only version queries returned August 2026.
+Those reads do not verify the unpublished backend repairs, native AI connectors, research quality, payment, or a completed submission.
+
+The public client completed two HTTP research runs against the local production build with real retained July and August data.
+Each run returned `SOURCE_NEEDED` and `WAIT_FOR_SOURCE`. Each run kept the caller's reviewed July baseline.
+Finalize returned the checked August version and rejected `NO_NEW_EVIDENCE` for the stale Pack.
+The caller must still review the result locally. These calls did not test browser storage or native AI connectors.
+The public buyer passed 104 tests and type checking. No new payment or investment order occurred.
+
 ## Product boundary
 
 EquityLayer is a research harness for the AI the investor already uses.

@@ -118,6 +118,47 @@ test("tool errors and failed validation do not become results", async () => {
   }
 });
 
+test("validation errors retain safe field paths without remote messages or values", async () => {
+  for (const toolResponse of [
+    { structuredContent: { ok: false, errors: [{ path: "sources[0].url", message: "private remote details" },
+      { path: "secret_credentials", message: "private" }] } },
+    { isError: true, content: [{ type: "text", text: 'Input validation error: Invalid arguments for tool begin_research: [{"path":["watch_id"],"message":"private remote details"}]' }] },
+  ]) {
+    const client = await connect("http://localhost/mcp", fakeServer({}, { toolResponse }));
+    await assert.rejects(client.call("begin_research"), error => {
+      assert.match(error.message, /Fields: sources\[0\]\.url|Fields: watch_id/);
+      assert.doesNotMatch(error.message, /private|secret_credentials/);
+      assert.equal(error.name, "ResearchToolError");
+      assert.equal(error.code, undefined);
+      return true;
+    });
+    await client.close();
+  }
+});
+
+test("baseline errors provide a bounded recovery command", async () => {
+  const client = await connect("http://localhost/mcp", fakeServer({}, { toolResponse: {
+    structuredContent: { ok: false, error: { code: "baseline_not_found", message: "private", details: { secret: "private" } } },
+  } }));
+  await assert.rejects(client.call("get_research_update"), error => {
+    assert.equal(error.serverCode, "baseline_not_found");
+    assert.match(error.message, /versions command/);
+    assert.doesNotMatch(error.message, /private|secret/);
+    return true;
+  });
+  await client.close();
+});
+
+test("the client permits read-only Pack discovery and retained versions", async () => {
+  const client = await connect("http://localhost/mcp", fakeServer({ ok: true }));
+  for (const name of ["list_research_packs", "get_research_pack_versions"]) assert.equal((await client.call(name)).ok, true);
+  assert.equal(parseArgs(["packs"]).command, "packs");
+  assert.equal(parseArgs(["versions", "--input", "pack.json"]).command, "versions");
+  assert.throws(() => parseArgs(["versions"]));
+  assert.throws(() => parseArgs(["packs", "--input", "pack.json"]));
+  await client.close();
+});
+
 test("connection and HTTP failures do not retry or expose the response body", async () => {
   let count = 0;
   await assert.rejects(connect("http://localhost/mcp", { fetcher: async () => { count++; throw new Error("secret"); } }), /connection failed/);

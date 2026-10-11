@@ -4,7 +4,48 @@ const MAX_BYTES = 2_000_000;
 const TOOL_NAMES = new Set([
   "get_service_status", "begin_research", "finalize_research", "resolve_trading_instrument", "get_instrument_evidence",
   "resolve_company_tracker", "get_research_update", "discover_theses",
+  "list_research_packs", "get_research_pack_versions",
 ]);
+
+const FIELD_NAMES = new Set(["watch_id", "revision", "theme_id", "stage_id", "symbols", "available_mcp_names",
+  "reviewed_baseline", "baseline", "pack_id", "version", "handle", "scope", "as_of_feed_day", "agent_fields",
+  "result_state", "summary", "sources", "url", "date", "claim", "kind", "drivers", "falsifiers", "unknowns", "next_check_at"]);
+const ERROR_CODES = new Set(["unsupported_theme", "adapter_unavailable", "baseline_missing", "baseline_conflict", "baseline_not_found"]);
+
+function fieldPath(value) {
+  const path = Array.isArray(value) ? value.map(part => typeof part === "number" ? `[${part}]` : part).join(".").replace(/\.\[/g, "[") : value;
+  if (typeof path !== "string" || !path || path.length > 160) return undefined;
+  const parts = path.replace(/\[\d{1,3}\]/g, "").split(".");
+  return parts.every(part => FIELD_NAMES.has(part)) ? path : undefined;
+}
+
+function toolError(response, fallback) {
+  let output = response?.structuredContent ?? response;
+  if (response?.isError && !response.structuredContent) {
+    const text = response.content?.find(item => item.type === "text")?.text;
+    // Read only SDK validation paths. Do not display source text or remote messages.
+    const prefix = "Input validation error: Invalid arguments for tool ";
+    const start = typeof text === "string" && text.includes(prefix) ? text.indexOf("[", text.indexOf(prefix)) : -1;
+    if (start >= 0) {
+      try { output = { errors: JSON.parse(text.slice(start)) }; } catch { /* Keep the safe generic error. */ }
+    }
+  }
+  const paths = [...new Set((Array.isArray(output?.errors) ? output.errors : []).slice(0, 30)
+    .map(issue => fieldPath(issue?.path)).filter(Boolean))];
+  const serverCode = ERROR_CODES.has(output?.error?.code) ? output.error.code : undefined;
+  const correction = serverCode?.startsWith("baseline_")
+    ? "Read retained versions with the versions command. Use the reviewed version or omit baseline on the first run."
+    : serverCode === "adapter_unavailable" ? "Read service status. Use a released adapter or report the missing source."
+    : serverCode === "unsupported_theme" ? "Read service status. Use a supported theme."
+    : paths.includes("watch_id") ? "Use a UUID for watch_id."
+    : "Check these fields against the tool schema.";
+  const error = new Error(paths.length || serverCode
+    ? `${fallback} ${serverCode ? `Code: ${serverCode}. ` : ""}${paths.length ? `Fields: ${paths.join(", ")}. ` : ""}${correction}` : fallback);
+  error.name = "ResearchToolError";
+  error.fieldPaths = paths;
+  error.serverCode = serverCode;
+  return error;
+}
 
 export function endpointUrl(value) {
   const url = new URL(value);
@@ -122,9 +163,9 @@ export async function connect(endpoint, { fetcher = fetch, timeoutMs = 15_000 } 
     async call(name, args = {}) {
       if (!TOOL_NAMES.has(name)) throw new Error("This client does not permit that tool.");
       const response = await request("tools/call", { name, arguments: args });
-      if (response?.isError) throw new Error("The research tool rejected the request. Check its schema and coverage.");
+      if (response?.isError) throw toolError(response, "The research tool rejected the request.");
       const output = response?.structuredContent ?? JSON.parse(response?.content?.find(item => item.type === "text")?.text ?? "null");
-      if (!output || typeof output !== "object" || output.ok === false) throw new Error("The research result is invalid. No result file was accepted.");
+      if (!output || typeof output !== "object" || output.ok === false) throw toolError(output, "The research result is invalid. No result file was accepted.");
       return output;
     },
     async close() {
