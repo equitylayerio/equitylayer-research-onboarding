@@ -4,6 +4,33 @@ The public source release is published. Two separately authorized local Solana D
 The first used the buyer execution code directly. The second used MCP stdio.
 Neither result proves a completed hackathon submission or a mainnet payment.
 
+## October 11 repair candidate
+
+This section records the checks before candidate publication. It does not report the current GitHub or production state.
+Check the default branch and its latest CI for source publication. Check the hosted deployment separately.
+
+The client candidate adds safe validation paths and retained Pack version discovery. Its first repair passed 28 tests.
+The next local repair supports the SDK's flattened field errors. Both text formats require a known tool name.
+The full client suite now passes 30 tests. An independent reviewer repeated all 30 tests and checked the parser boundary.
+Two calls with an invalid stage returned only `stage_id`, without the raw error values or an automatic retry.
+The onboarding instructions now preserve the returned Pack version through finalize and require review before baseline acceptance.
+Missing current evidence keeps the previous baseline. A retained-version comparison does not check new official releases.
+
+These changes were on the candidate branch during these checks. These checks do not establish a new backend deployment.
+Hosted tool discovery passed on October 11, and two read-only version queries returned August 2026.
+Those reads do not verify the unpublished backend repairs, native AI connectors, research quality, payment, or a completed submission.
+
+Two local agents also tested six synthetic research cases each. The first run exposed a date-scope error and two invalid fixture stages.
+The method now separates the retained filing day from a research cutoff that the user explicitly supplies.
+Both non-blind replays received all six methods. An independent reviewer scored their answers at 60/60, with no hard failure.
+The first valid-method trials scored 38/40. The replay is not a new blind trial, a cross-model comparison, or proof of investment quality.
+
+The public client completed two HTTP research runs against the local production build with real retained July and August data.
+Each run returned `SOURCE_NEEDED` and `WAIT_FOR_SOURCE`. Each run kept the caller's reviewed July baseline.
+Finalize returned the checked August version and rejected `NO_NEW_EVIDENCE` for the stale Pack.
+The caller must still review the result locally. These calls did not test browser storage or native AI connectors.
+The public buyer passed 104 tests and type checking. No new payment or investment order occurred.
+
 ## Product boundary
 
 EquityLayer is a research harness for the AI the investor already uses.

@@ -4,9 +4,11 @@ import { connect, endpointUrl } from "./mcp.mjs";
 import { inspectCompatibility } from "./compatibility.mjs";
 
 const TOOLS = { status: "get_service_status", discover: "discover_theses", begin: "begin_research", finalize: "finalize_research",
+  packs: "list_research_packs", versions: "get_research_pack_versions",
   company: "resolve_company_tracker", update: "get_research_update", instrument: "resolve_trading_instrument", evidence: "get_instrument_evidence" };
 const HELP = `EquityLayer research client (Node.js 22+)
-  node client/cli.mjs doctor|status|tools|discover [--endpoint URL]
+  node client/cli.mjs doctor|status|tools|discover|packs [--endpoint URL]
+  node client/cli.mjs versions --input pack.json [--endpoint URL]
   node client/cli.mjs begin --input scope.json [--out plan.json] [--endpoint URL]
   node client/cli.mjs finalize --input public-draft.json --public-data --out result.json [--endpoint URL]
   node client/cli.mjs instrument --input symbol.json [--endpoint URL]
@@ -36,8 +38,8 @@ export function parseArgs(args) {
     result[key.slice(2)] = rest[++index];
   }
   endpointUrl(result.endpoint);
-  const needsInput = ["begin", "finalize", "instrument", "evidence", "company", "update"].includes(command);
-  if (needsInput !== Boolean(result.input)) throw new Error("Begin, finalize, instrument, evidence, company, and update require --input. Other commands do not accept input.");
+  const needsInput = ["begin", "finalize", "instrument", "evidence", "company", "update", "versions"].includes(command);
+  if (needsInput !== Boolean(result.input)) throw new Error("This command has an invalid --input option. Read --help for the required input.");
   if (command === "finalize" && (!result.publicData || !result.out)) throw new Error("Finalize requires --public-data and --out. Do not send private research.");
   if (result.publicData && command !== "finalize") throw new Error("Use --public-data only with finalize.");
   return result;

@@ -15,13 +15,18 @@ Do not claim the connection works until get_service_status succeeds.
    Stop if begin_research or finalize_research is missing. Ask for an updated server, not payment or sign-in.
 2. Use my dashboard scope if I supply one. Otherwise, help me select a theme and companies.
 3. Call begin_research. Apply its domain checks, source rules, and coverage limits.
+   Keep the returned handle, scope, retained day, and optional Pack baseline unchanged.
 4. Check each company with resolve_company_tracker.
 5. Use available approved sources. Follow get_research_update only for the scope that permits it.
 6. Draft the returned agent fields. Separate reported facts, management claims, inference, and missing evidence.
 7. Ask me to review the public draft before finalize_research sends it to the server.
+   Use the returned next_tool_call arguments. Replace only agent_fields with the public findings.
 8. Save the returned result_file locally. Show me how to import it into the matching dashboard watch.
 
 Use SOURCE_NEEDED when required evidence is missing. Missing coverage is not NO_NEW_EVIDENCE.
+Check result_state, freshness, and caller_action before saving a Pack baseline.
+For SOURCE_NEEDED, keep my previous reviewed baseline. A retained comparison does not check new official releases.
+After I change the research scope, use its new prompt. Do not reuse the previous scope's Pack baseline.
 Do not infer AI demand from total issuer revenue, or usable capacity from equipment purchases.
 Do not replace my accepted baseline without my review. A next-check date does not schedule a job.
 Apply the returned research plan only within this prompt's permissions.

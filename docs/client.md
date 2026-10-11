@@ -12,6 +12,8 @@ It requires Node.js 22 or later. It has no package dependencies.
 5. Give `plan.local.json` to your existing AI. Ask it to apply the research plan and fill the returned `agent_fields_schema`.
 
 Use `discover` to inspect the server's public research entry points.
+Use `packs` to read released coverage and source status.
+Use `versions --input examples/monthly-pack.json` to list retained versions.
 Use `company --input request.json` for each returned company check.
 Use `update --input request.json` only when the plan supplies that request for covered companies.
 Copy the returned tool arguments into each request file. Do not invent coverage or call a paid endpoint automatically.
@@ -34,7 +36,8 @@ This repository does not start a local backend. Use the hosted service or a sepa
 
 ## Return a result to the local dashboard
 
-Copy the handle, scope, and retained day from the plan into `public-draft.local.json`.
+Copy `next_tool_call.arguments` from the plan into `public-draft.local.json`.
+Keep the returned handle, scope, retained day, and optional Pack baseline unchanged.
 Add the public `agent_fields` that your AI produced. Use the exact returned schema.
 Review this file before transmission. Remove private notes, positions, credentials, and account details.
 
@@ -49,6 +52,25 @@ It does not detect confidential content for you.
 Successful validation saves the `result_file`, not the MCP wrapper. Import it through your dashboard's research-result control.
 Review the sources before you accept the result. Validation does not prove that the evidence supports a conclusion.
 The client cannot accept a baseline or schedule monitoring. Existing output files are never overwritten.
+
+## Review a later update
+
+Use the dashboard's current research prompt after you review a result there.
+Its `reviewed_baseline` identifies the public Pack version that you accepted. Private review text stays local.
+After you change the research scope, use the new prompt. Do not copy a baseline from the previous scope.
+The next begin call pins its current Pack version separately from the reviewed comparison version.
+Keep that pinned version in the finalize arguments. Do not substitute a newer version midway through the research.
+
+Read `result_state`, `freshness`, and `caller_action` on each update.
+`SOURCE_NEEDED` means required current evidence is missing. Keep the previous reviewed baseline until that evidence is available.
+`comparison_state` compares retained Pack versions only. It does not prove that the official source has no newer release.
+Calendar freshness does not independently verify the latest official release.
+
+Schema errors name permitted fields to correct. Recognized update baseline errors point to the `versions` command.
+Other tool failures can return a generic rejection without field details.
+If begin rejects `reviewed_baseline`, read `versions` and check that the selected Pack covers the scope.
+Do not replace an accepted baseline with a guessed version. Correct the input and repeat the command.
+The client does not automatically retry research or display remote error text.
 
 ## Research, payment, and trading
 
