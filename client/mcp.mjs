@@ -77,18 +77,45 @@ function rpcResult(message, id) {
   return { value: message.result };
 }
 
-export async function readRpc(response, id) {
+function cancelBody(body) {
+  // Transport cleanup cannot extend a completed or failed request.
+  try { void body?.cancel().catch(() => {}); } catch { /* Cleanup is best effort. */ }
+}
+
+function waitFor(promise, signal) {
+  if (!signal) return promise;
+  let abort;
+  const interrupted = new Promise((_, reject) => {
+    abort = () => reject(signal.reason);
+    if (signal.aborted) abort();
+    else signal.addEventListener("abort", abort, { once: true });
+  });
+  return Promise.race([promise, interrupted]).finally(() => signal.removeEventListener("abort", abort));
+}
+
+async function withDeadline(timeoutMs, operation) {
+  const controller = new AbortController();
+  // Use a retained timer. A transport can ignore abort or lose its signal.
+  const timer = setTimeout(() => controller.abort(new Error("The MCP request timed out. No retry was sent.")), timeoutMs);
+  try { return await operation(controller.signal); }
+  finally { clearTimeout(timer); }
+}
+
+export async function readRpc(response, id, { signal } = {}) {
   if (!response.body) throw new Error("The MCP response is empty.");
   const contentType = response.headers.get("content-type") ?? "";
   const sse = contentType.includes("text/event-stream");
-  if (!sse && !contentType.includes("application/json")) throw new Error("The MCP content type is not supported.");
+  if (!sse && !contentType.includes("application/json")) {
+    cancelBody(response.body);
+    throw new Error("The MCP content type is not supported.");
+  }
   const reader = response.body.getReader();
   const decoder = new TextDecoder();
   let bytes = 0;
   let buffer = "";
   try {
     while (true) {
-      const { value, done } = await reader.read();
+      const { value, done } = await waitFor(reader.read(), signal);
       if (done) break;
       bytes += value.byteLength;
       if (bytes > MAX_BYTES) throw new Error("The MCP response exceeds the size limit.");
@@ -110,40 +137,52 @@ export async function readRpc(response, id) {
     if (!result) throw new Error("The MCP response does not match the request.");
     return result.value;
   } finally {
-    await reader.cancel().catch(() => {});
+    // A completed response must not wait for an unresponsive transport cleanup.
+    void reader.cancel().catch(() => {});
     reader.releaseLock();
   }
 }
 
 export async function connect(endpoint, { fetcher = fetch, timeoutMs = 15_000 } = {}) {
   const url = endpointUrl(endpoint);
+  if (!Number.isSafeInteger(timeoutMs) || timeoutMs < 1 || timeoutMs > 3_600_000) {
+    throw new Error("Use a request deadline from 1 to 3600000 milliseconds.");
+  }
   let requestId = 0;
   let session;
   let protocol = PROTOCOL;
   async function request(method, params, notification = false) {
     const id = notification ? undefined : ++requestId;
-    let response;
-    try {
-      response = await fetcher(url, {
-        method: "POST", redirect: "error", signal: AbortSignal.timeout(timeoutMs),
-        headers: {
-          accept: "application/json, text/event-stream", "content-type": "application/json",
-          "MCP-Protocol-Version": protocol,
-          ...(session ? { "Mcp-Session-Id": session } : {}),
-        },
-        body: JSON.stringify({ jsonrpc: "2.0", ...(id === undefined ? {} : { id }), method, ...(params ? { params } : {}) }),
-      });
-    } catch { throw new Error("The MCP connection failed or timed out. No payment or order was sent."); }
-    if (!response.ok) {
-      await response.body?.cancel();
-      throw new Error(`The MCP endpoint returned HTTP ${response.status}. No retry was sent.`);
-    }
-    if (method === "initialize") {
-      session = response.headers.get("mcp-session-id") ?? undefined;
-      if (session && (!/^[\x21-\x7e]+$/.test(session) || session.length > 1024)) throw new Error("The MCP session identifier is invalid.");
-    }
-    if (notification) { await response.body?.cancel(); return; }
-    return readRpc(response, id);
+    return withDeadline(timeoutMs, async (signal) => {
+      let response;
+      try {
+        const pending = Promise.resolve(fetcher(url, {
+          method: "POST", redirect: "error", signal,
+          headers: {
+            accept: "application/json, text/event-stream", "content-type": "application/json",
+            "MCP-Protocol-Version": protocol,
+            ...(session ? { "Mcp-Session-Id": session } : {}),
+          },
+          body: JSON.stringify({ jsonrpc: "2.0", ...(id === undefined ? {} : { id }), method, ...(params ? { params } : {}) }),
+        }));
+        // A late response must not retain an abandoned network body.
+        void pending.then((late) => { if (signal.aborted) cancelBody(late?.body); }).catch(() => {});
+        response = await waitFor(pending, signal);
+      } catch { throw new Error("The MCP connection failed or timed out. No payment or order was sent."); }
+      if (!response.ok) {
+        cancelBody(response.body);
+        throw new Error(`The MCP endpoint returned HTTP ${response.status}. No retry was sent.`);
+      }
+      if (method === "initialize") {
+        session = response.headers.get("mcp-session-id") ?? undefined;
+        if (session && (!/^[\x21-\x7e]+$/.test(session) || session.length > 1024)) {
+          cancelBody(response.body);
+          throw new Error("The MCP session identifier is invalid.");
+        }
+      }
+      if (notification) { cancelBody(response.body); return; }
+      return readRpc(response, id, { signal });
+    });
   }
   const initialized = await request("initialize", {
     protocolVersion: PROTOCOL, capabilities: {}, clientInfo: { name: "equitylayer-research-client", version: "0.1.0" },
@@ -184,9 +223,13 @@ export async function connect(endpoint, { fetcher = fetch, timeoutMs = 15_000 } 
     async close() {
       if (!session) return;
       try {
-        const response = await fetcher(url, { method: "DELETE", redirect: "error", signal: AbortSignal.timeout(timeoutMs),
-          headers: { "Mcp-Session-Id": session, "MCP-Protocol-Version": protocol } });
-        await response.body?.cancel();
+        await withDeadline(timeoutMs, async (signal) => {
+          const pending = Promise.resolve(fetcher(url, { method: "DELETE", redirect: "error", signal,
+            headers: { "Mcp-Session-Id": session, "MCP-Protocol-Version": protocol } }));
+          void pending.then((late) => { if (signal.aborted) cancelBody(late?.body); }).catch(() => {});
+          const response = await waitFor(pending, signal);
+          cancelBody(response.body);
+        });
       } catch { /* Session cleanup must not replace the research result. */ }
     },
   };
