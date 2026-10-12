@@ -1,6 +1,9 @@
 # EquityLayer Research Onboarding
 
-Build a better investment decision system with your AI.
+An equity research harness for the AI you already use.
+
+Start with AI Compute across US, Taiwan, Japan, and Korea supply chains. Give your AI a research scope, check source-linked evidence, and review the result in your local dashboard.
+For the submission scope and demonstrated limits, read [the public product summary](docs/hackathon-product.md).
 
 This repository gives you a public, tool-neutral starting point for the EquityLayer workflow:
 
