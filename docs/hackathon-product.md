@@ -10,6 +10,9 @@ EquityLayer supplies domain research methods and source-linked evidence to the A
 The initial theme is AI Compute across the US, Taiwan, Japan, and Korea. CPO and packaging are research questions within that supply chain, not separate finance chatbots.
 An industry map helps the user choose companies and a question. The MCP interface gives their AI a research method, evidence limits, and a structured result.
 
+[Research setup](research-setup.md) maps a company's evidence needs to the user's declared tool schemas and generates a Codex or Claude Code configuration recipe.
+AI Compute and PCB / CCL profiles share the result contract. Missing access remains a gap; a tool match is not verified data coverage.
+
 The user reviews the result in the local dashboard before accepting a baseline.
 Their AI performs the research. EquityLayer does not replace it or provide a general memory platform.
 
@@ -47,6 +50,8 @@ Private thesis content, source archives, seller storage, credentials, and the pr
 ## Founder submission requirements
 
 The founder still needs to confirm registration, eligibility, team and funding details, prior-work disclosure, videos, track selection, and reviewer access.
+The [official event page](https://colosseum.com/worldsfair), checked October 12, lists October 12, 2026 as the submission date.
+Confirm the exact cutoff in the signed-in portal. The [FAQ](https://colosseum.com/hackathon) requires a two-to-three-minute pitch and a demo of no more than three minutes.
 The public source and previous verification records do not establish a completed submission.
 Use the signed-in form to confirm the current requirements. No application was submitted by this checkpoint.
 

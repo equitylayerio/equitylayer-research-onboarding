@@ -4,6 +4,17 @@ The public source release is published. Two separately authorized local Solana D
 The first used the buyer execution code directly. The second used MCP stdio.
 Neither result proves a completed hackathon submission or a mainnet payment.
 
+## October 12 public research setup candidate
+
+This candidate adds topic and company evidence requirements, local tool-schema matching, and manual Codex / Claude Code configuration recipes.
+It also includes the request-deadline repair. It does not include the internal persistent research loops or change the hosted backend.
+The public client passes 62 tests on Node 22, 24, and 25. The separate buyer passes 104 tests and type checking.
+Independent QC passes 19 additional probes and all 62 public client tests. Two hosted setup runs saved plans without accepting a baseline.
+Fresh wallet-free checks confirmed both retained Devnet transactions. No new purchase occurred.
+See [setup verification and QC](2026-10-12-research-setup-verification.md) for commands, outputs, repairs, and limits.
+These are pre-publication observations. Check the default branch and its CI for publication status.
+Native AI connection and model research quality remain unverified. A new purchase still requires the separately configured private local seller.
+
 ## October 11 repair candidate
 
 This section records the checks before candidate publication. It does not report the current GitHub or production state.

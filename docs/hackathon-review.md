@@ -8,7 +8,7 @@ The map describes the research universe. It does not imply complete live data co
 
 1. Open [the AI Compute workspace](https://equitylayer.io/dashboard?view=explore).
 2. Select a component and companies. Use the AI handoff to obtain a scoped research prompt.
-3. Follow [the public client instructions](client.md). Run `doctor` before sending research.
+3. Follow [research setup](research-setup.md) to check source needs and your AI's tools. Run `doctor` before sending research.
 4. Ask your AI to complete the returned research fields with public evidence.
 5. Finalize the result. Import the saved file into the same browser workspace.
 6. Review the evidence before accepting a baseline. Return later to compare the next result.
@@ -56,8 +56,10 @@ The product flow stays the same; each connection exposes only its verified capab
 - [Independent publication QC](2026-10-02-publication-qc.md)
 - [Hosted execution verification](2026-10-02-hosted-verification.md)
 - [Devnet purchase verification](2026-10-03-devnet-payment-verification.md)
+- [October 12 setup verification and QC](2026-10-12-research-setup-verification.md)
 
 EquityLayer existed before this hackathon. Repository publication is not evidence that all work began during the event.
 The submission must distinguish prior work from event-period changes.
 The [official FAQ](https://colosseum.com/hackathon) permits disclosed pre-existing code and limits judging to event-period work.
 The founder must still confirm personal, team, and funding eligibility.
+The [event page](https://colosseum.com/worldsfair), checked October 12, lists October 12, 2026 as the deadline. Confirm its exact time in the signed-in portal.
