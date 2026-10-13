@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "servers": [
+    {
+      "server_id": "synthetic-example-not-an-installed-provider",
+      "captured_at": "2026-10-12T00:00:00Z",
+      "tools": [
+        {
+          "name": "synthetic_read_company",
+          "inputSchema": {
+            "type": "object",
+            "properties": { "symbol": { "type": "string" } },
+            "required": ["symbol"],
+            "additionalProperties": false
+          },
+          "capabilities": [
+            {
+              "kind": "company_financials",
+              "markets": ["US"],
+              "symbols": ["NVDA"],
+              "source_kind": "unknown",
+              "access_state": "unknown"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

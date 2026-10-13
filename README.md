@@ -1,6 +1,9 @@
 # EquityLayer Research Onboarding
 
-Build a better investment decision system with your AI.
+An equity research harness for the AI you already use.
+
+Start with AI Compute across US, Taiwan, Japan, and Korea supply chains. Give your AI a research scope, check source-linked evidence, and review the result in your local dashboard.
+For the submission scope and demonstrated limits, read [the public product summary](docs/hackathon-product.md).
 
 This repository gives you a public, tool-neutral starting point for the EquityLayer workflow:
 
@@ -13,9 +16,11 @@ It does not bundle live market data, private research packs, or the private prod
 ## Start in 10 minutes
 
 For an executable MCP workflow, use the [research client](docs/client.md). It reads the existing harness and saves a result for local review.
-The client has no payment or trading permissions. The complete hackathon release is still in preparation.
+The client has no payment or trading permissions. Founder submission materials and fresh seller access remain separate requirements.
 Run `npm run research -- doctor` first. The hosted service may lack required research tools.
 Give your AI the [MCP onboarding prompt](prompts/mcp-onboarding.md) for this workflow.
+For topic-specific data-tool guidance and Codex / Claude Code configuration, use [research setup](docs/research-setup.md).
+It matches declared schema snapshots to company tasks and keeps missing access visible. It does not install or certify a provider.
 
 An optional [Solana research buyer](tools/x402-mcp-bridge/README.md) exposes one fixed Devnet research-purchase tool through MCP.
 It requires a separately configured local seller, signer, and explicit human approval. Installing it does not enable payment.
