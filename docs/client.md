@@ -5,6 +5,9 @@ It requires Node.js 22 or later. It has no package dependencies.
 
 ## Start
 
+For a topic method, data-tool requirements, and client configuration, begin with [research setup](research-setup.md).
+Use your existing AI and approved data sources. No EquityLayer-hosted model is required.
+
 1. Run `npm test`.
 2. Run `npm run research -- doctor` to check required tools before you send research.
 3. Run `npm run research -- tools` to read the server's tool schemas after the check passes.

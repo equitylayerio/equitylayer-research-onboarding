@@ -2,6 +2,7 @@ import { readFile, stat, writeFile } from "node:fs/promises";
 import { pathToFileURL } from "node:url";
 import { connect, endpointUrl } from "./mcp.mjs";
 import { inspectCompatibility } from "./compatibility.mjs";
+import { buildResearchSetup, validateSetupInput, validateToolInventory } from "./setup-plan.mjs";
 
 const TOOLS = { status: "get_service_status", discover: "discover_theses", begin: "begin_research", finalize: "finalize_research",
   packs: "list_research_packs", versions: "get_research_pack_versions",
@@ -14,6 +15,7 @@ const HELP = `EquityLayer research client (Node.js 22+)
   node client/cli.mjs instrument --input symbol.json [--endpoint URL]
   node client/cli.mjs evidence --input examples/robinhood-evidence.json [--endpoint URL]
   node client/cli.mjs company|update --input request.json [--endpoint URL]
+  node client/cli.mjs setup --input scope.json --client codex|claude-code [--topic ai_compute|pcb_ccl] [--inventory tools.json] [--out setup.json]
 
 Default endpoint: https://equitylayer.io/mcp
 Use --endpoint http://127.0.0.1:3100/mcp for a local server.
@@ -24,7 +26,7 @@ This client cannot pay, sign, trade, or accept a research baseline.
 export function parseArgs(args) {
   if (args.length === 0 || (args.length === 1 && args[0] === "--help")) return { help: true };
   const [command, ...rest] = args;
-  if (!Object.hasOwn(TOOLS, command) && !["tools", "doctor"].includes(command)) throw new Error("Read the supported commands with --help.");
+  if (!Object.hasOwn(TOOLS, command) && !["tools", "doctor", "setup"].includes(command)) throw new Error("Read the supported commands with --help.");
   const result = { command, endpoint: "https://equitylayer.io/mcp", publicData: false };
   const seen = new Set();
   for (let index = 0; index < rest.length; index++) {
@@ -32,16 +34,17 @@ export function parseArgs(args) {
     if (seen.has(key)) throw new Error("Remove duplicate options.");
     seen.add(key);
     if (key === "--public-data") { result.publicData = true; continue; }
-    if (!["--endpoint", "--input", "--out"].includes(key) || !rest[index + 1] || rest[index + 1].startsWith("--")) {
+    if (!["--endpoint", "--input", "--out", ...(command === "setup" ? ["--client", "--topic", "--inventory"] : [])].includes(key) || !rest[index + 1] || rest[index + 1].startsWith("--")) {
       throw new Error("Check the command options with --help.");
     }
     result[key.slice(2)] = rest[++index];
   }
   endpointUrl(result.endpoint);
-  const needsInput = ["begin", "finalize", "instrument", "evidence", "company", "update", "versions"].includes(command);
+  const needsInput = ["begin", "finalize", "instrument", "evidence", "company", "update", "versions", "setup"].includes(command);
   if (needsInput !== Boolean(result.input)) throw new Error("This command has an invalid --input option. Read --help for the required input.");
   if (command === "finalize" && (!result.publicData || !result.out)) throw new Error("Finalize requires --public-data and --out. Do not send private research.");
   if (result.publicData && command !== "finalize") throw new Error("Use --public-data only with finalize.");
+  if (command === "setup" && (result.endpoint !== "https://equitylayer.io/mcp" || !["codex", "claude-code"].includes(result.client) || result.topic !== undefined && !["ai_compute", "pcb_ccl"].includes(result.topic))) throw new Error("Setup requires the hosted endpoint and a supported client and topic.");
   return result;
 }
 
@@ -63,6 +66,15 @@ export async function run(args, { connectClient = connect, stdout = value => pro
       throw new Error("Use a company symbol and a supported network only. Do not supply wallet or order data.");
     }
   }
+  let inventory;
+  if (options.command === "setup") {
+    input = validateSetupInput(input);
+    if (options.inventory) {
+      const info = await stat(options.inventory);
+      if (!info.isFile() || info.size > 1_000_000) throw new Error("Use a bounded public tool inventory without credentials.");
+      inventory = validateToolInventory(JSON.parse(await readFile(options.inventory, "utf8")));
+    }
+  }
   const client = await connectClient(options.endpoint, { timeoutMs: 25_000 });
   try {
     let output;
@@ -71,14 +83,15 @@ export async function run(args, { connectClient = connect, stdout = value => pro
     } else if (options.command === "tools") {
       output = await client.tools();
     } else {
-      if (["begin", "finalize", "instrument", "evidence"].includes(options.command)) {
+      if (["begin", "finalize", "instrument", "evidence", "setup"].includes(options.command)) {
         const listing = await client.tools();
         const report = inspectCompatibility(options.endpoint, listing);
         const available = options.command === "evidence" ? report.chain_evidence_available
           : options.command === "instrument" ? report.instrument_mapping_available : report.research_tools_available;
         if (!available) throw new Error("This server lacks required tools. Run doctor. Do not send the research draft to this server.");
       }
-      output = await client.call(TOOLS[options.command], input);
+      output = await client.call(options.command === "setup" ? TOOLS.begin : TOOLS[options.command], input);
+      if (options.command === "setup") output = buildResearchSetup({ scope: input, plan: output, inventory, client: options.client, topic: options.topic });
     }
     const result = options.command === "finalize" ? output.result_file : output;
     if (options.command === "finalize" && (output.ok !== true || !result?.result_id || !result?.result_state)) {
