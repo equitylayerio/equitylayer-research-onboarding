@@ -5,3 +5,8 @@
 *.local.json
 node_modules/
 coverage/
+.equitylayer/
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+*.sqlite-journal
