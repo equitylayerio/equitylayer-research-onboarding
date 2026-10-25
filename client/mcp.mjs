@@ -5,6 +5,7 @@ const TOOL_NAMES = new Set([
   "get_service_status", "begin_research", "finalize_research", "resolve_trading_instrument", "get_instrument_evidence",
   "resolve_company_tracker", "get_research_update", "discover_theses",
   "list_research_packs", "get_research_pack_versions",
+  "resolve_research_scope",
 ]);
 
 const FIELD_NAMES = new Set(["watch_id", "revision", "theme_id", "stage_id", "symbols", "available_mcp_names",
@@ -93,11 +94,12 @@ function waitFor(promise, signal) {
   return Promise.race([promise, interrupted]).finally(() => signal.removeEventListener("abort", abort));
 }
 
-async function withDeadline(timeoutMs, operation) {
+async function withDeadline(timeoutMs, operation, parentSignal) {
   const controller = new AbortController();
   // Use a retained timer. A transport can ignore abort or lose its signal.
   const timer = setTimeout(() => controller.abort(new Error("The MCP request timed out. No retry was sent.")), timeoutMs);
-  try { return await operation(controller.signal); }
+  const signal = parentSignal ? AbortSignal.any([controller.signal, parentSignal]) : controller.signal;
+  try { return await operation(signal); }
   finally { clearTimeout(timer); }
 }
 
@@ -143,7 +145,7 @@ export async function readRpc(response, id, { signal } = {}) {
   }
 }
 
-export async function connect(endpoint, { fetcher = fetch, timeoutMs = 15_000 } = {}) {
+export async function connect(endpoint, { fetcher = fetch, timeoutMs = 15_000, signal: parentSignal } = {}) {
   const url = endpointUrl(endpoint);
   if (!Number.isSafeInteger(timeoutMs) || timeoutMs < 1 || timeoutMs > 3_600_000) {
     throw new Error("Use a request deadline from 1 to 3600000 milliseconds.");
@@ -151,7 +153,11 @@ export async function connect(endpoint, { fetcher = fetch, timeoutMs = 15_000 } 
   let requestId = 0;
   let session;
   let protocol = PROTOCOL;
+  let closed = false;
+  const lifetime = new AbortController();
+  const connectionSignal = parentSignal ? AbortSignal.any([lifetime.signal, parentSignal]) : lifetime.signal;
   async function request(method, params, notification = false) {
+    if (closed || connectionSignal.aborted) throw new Error("The MCP connection is closed or cancelled. No retry was sent.");
     const id = notification ? undefined : ++requestId;
     return withDeadline(timeoutMs, async (signal) => {
       let response;
@@ -182,7 +188,7 @@ export async function connect(endpoint, { fetcher = fetch, timeoutMs = 15_000 } 
       }
       if (notification) { cancelBody(response.body); return; }
       return readRpc(response, id, { signal });
-    });
+    }, connectionSignal);
   }
   const initialized = await request("initialize", {
     protocolVersion: PROTOCOL, capabilities: {}, clientInfo: { name: "equitylayer-research-client", version: "0.1.0" },
@@ -221,7 +227,10 @@ export async function connect(endpoint, { fetcher = fetch, timeoutMs = 15_000 } 
       return output;
     },
     async close() {
-      if (!session) return;
+      if (closed) return;
+      closed = true;
+      lifetime.abort(new Error("The MCP connection is closed. No retry was sent."));
+      if (!session || parentSignal?.aborted) return;
       try {
         await withDeadline(timeoutMs, async (signal) => {
           const pending = Promise.resolve(fetcher(url, { method: "DELETE", redirect: "error", signal,
@@ -229,7 +238,7 @@ export async function connect(endpoint, { fetcher = fetch, timeoutMs = 15_000 } 
           void pending.then((late) => { if (signal.aborted) cancelBody(late?.body); }).catch(() => {});
           const response = await waitFor(pending, signal);
           cancelBody(response.body);
-        });
+        }, parentSignal);
       } catch { /* Session cleanup must not replace the research result. */ }
     },
   };

@@ -277,6 +277,20 @@ test("a body that stays open is aborted by the request deadline", async () => {
   }
 });
 
+test("a matched MCP result does not wait for unresponsive stream cancellation", { timeout: 300 }, async () => {
+  let cancelled = false;
+  const body = new ReadableStream({
+    start(controller) {
+      controller.enqueue(new TextEncoder().encode('data: {"jsonrpc":"2.0","id":1,"result":{"ok":true}}\n\n'));
+    },
+    cancel() { cancelled = true; return new Promise(() => {}); },
+  });
+  const response = new Response(body, { headers: { "content-type": "text/event-stream" } });
+  assert.deepEqual(await readRpc(response, 1), { ok: true });
+  assert.equal(cancelled, true);
+  assert.equal(response.body.locked, false);
+});
+
 test("a missing finalized file creates no output and closes the client", async () => {
   const dir = await mkdtemp(join(tmpdir(), "equitylayer-client-test-"));
   try {
@@ -349,6 +363,48 @@ test("tool discovery follows pagination and preserves later tools", async () => 
   assert.deepEqual((await client.tools()).tools.map(tool => tool.name), ["begin_research", "finalize_research"]);
   assert.deepEqual(cursors, [undefined, "second"]);
   await client.close();
+});
+
+for (const mode of ["abort", "close"]) test(`${mode} stops pending discovery and prevents later pagination`, async () => {
+  const server = fakeServer(), controller = new AbortController(); let entered, release, pages = 0;
+  const waiting = new Promise(resolve => { entered = resolve; });
+  const blocked = new Promise(resolve => { release = resolve; });
+  const client = await connect("http://localhost/mcp", { signal: controller.signal, fetcher: async (url, init) => {
+    const body = init.body && JSON.parse(init.body);
+    if (body?.method === "tools/list") {
+      pages++; entered(); await blocked;
+      return json(message(body.id, { tools: [], nextCursor: "must-not-request" }));
+    }
+    return server.fetcher(url, init);
+  } });
+  const discovery = client.tools();
+  const rejected = assert.rejects(discovery, /closed|cancelled|connection failed/);
+  await waiting;
+  if (mode === "abort") controller.abort();
+  else await client.close();
+  await rejected; release(); await new Promise(resolve => setImmediate(resolve));
+  assert.equal(pages, 1);
+  await assert.rejects(client.tools(), /closed or cancelled/);
+  await assert.rejects(client.call("get_service_status"), /closed or cancelled/);
+  await client.close();
+  assert.equal(server.calls.filter(call => call.method === "DELETE").length, mode === "close" ? 1 : 0);
+});
+
+test("caller cancellation interrupts an active session cleanup", async () => {
+  const server = fakeServer(), controller = new AbortController(); let entered, release, cleanupSignal;
+  const waiting = new Promise(resolve => { entered = resolve; });
+  const blocked = new Promise(resolve => { release = resolve; });
+  const client = await connect("http://localhost/mcp", { signal: controller.signal, fetcher: async (url, init) => {
+    if (init.method === "DELETE") { cleanupSignal = init.signal; entered(); await blocked; return new Response(null, { status: 204 }); }
+    return server.fetcher(url, init);
+  } });
+  const cleanup = client.close(); await waiting; controller.abort();
+  let timer;
+  try {
+    const finished = await Promise.race([cleanup.then(() => true), new Promise(resolve => { timer = setTimeout(() => resolve(false), 250); })]);
+    assert.equal(finished, true); assert.equal(cleanupSignal.aborted, true);
+  } finally { clearTimeout(timer); release(); }
+  await cleanup;
 });
 
 test("tool discovery rejects malformed, cyclic, and excessive pagination", async () => {

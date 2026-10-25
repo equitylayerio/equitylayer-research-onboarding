@@ -1,8 +1,8 @@
 # Use the EquityLayer research harness
 
 Copy this prompt into your existing AI client. Keep private research in your own workspace.
-Read `docs/research-setup.md` for topic-specific tool requirements and client configuration.
-Apply `prompts/model-portable-research.md` without changing the returned output schema.
+For model capability differences, also read `prompts/model-portable-research.md`.
+Keep the research method and result schema unchanged. The caller adapter handles provider differences.
 
 ```text
 Use EquityLayer for domain research methods, curated sources, and evidence checks.

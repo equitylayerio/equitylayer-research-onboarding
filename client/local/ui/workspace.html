@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <title>EquityLayer · Local workspace</title>
+  <link rel="stylesheet" href="/workspace.css">
+  <script src="/workspace.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#inbox-heading">Skip to Inbox</a>
+  <header class="workspace-header">
+    <div class="brand"><strong>EquityLayer</strong><span>Private local workspace</span></div>
+    <div class="header-actions"><span id="connection">Locked</span><button id="refresh" type="button" disabled>Refresh</button><button id="lock" type="button" disabled>Lock workspace</button></div>
+  </header>
+  <div id="status-message" role="status" aria-live="polite"></div>
+  <div id="locked" class="locked"><h1>Open your local workspace</h1><p>The access token is missing or expired. Open a new workspace link from the local command.</p><p>Private research stays in the local SQLite record.</p></div>
+  <main id="workspace" hidden>
+    <section id="pending-panel" class="pending-panel" hidden aria-labelledby="pending-heading"><h2 id="pending-heading" tabindex="-1">Request requires attention</h2><p id="pending-message"></p><pre id="pending-request"></pre><div class="actions"><button id="retry-exact" type="button">Retry exact request</button><button id="resolve-conflict" type="button" hidden>Review refreshed record</button></div></section>
+    <aside class="sidebar" aria-label="Research filters">
+      <button id="new-watch" class="primary" type="button">New watch</button>
+      <h2>Themes</h2><div id="themes" class="filter-list"></div>
+      <h2>Companies</h2><label for="company-filter" class="sr-only">Filter by company</label><select id="company-filter"><option value="">All companies</option></select>
+      <h2>Watches</h2><div id="watches" class="filter-list"></div><button id="more-watches" hidden type="button">Load more watches</button>
+      <details class="import-control"><summary>Import legacy workspace</summary><p>Provenance remains unknown. Original acceptance remains legacy-unclassified.</p><label for="legacy-file">JSON archive · maximum 2 MB</label><input id="legacy-file" type="file" accept=".json,application/json"><button id="import-legacy" type="button">Import archive</button></details>
+      <p class="local-note">Saving a watch does not authorize AI execution.</p>
+    </aside>
+    <section class="inbox-pane" aria-labelledby="inbox-heading">
+      <div class="pane-heading"><h1 id="inbox-heading" tabindex="-1">Inbox</h1><span id="inbox-count"></span></div>
+      <p id="filter-description" class="muted">All research</p>
+      <label for="inbox-kind" class="sr-only">Inbox record type</label><select id="inbox-kind"><option value="all">All research</option><option value="delivery">Results</option><option value="thesis">Theses</option></select>
+      <button id="view-watch" type="button" hidden>View watch / edit scope</button>
+      <details class="tracking-panel" id="tracking-panel"><summary id="tracking-heading">Tracking <span id="tracking-count"></span></summary><div id="tracking" aria-busy="false"></div><button id="more-tracking" type="button" hidden>Load more tracking</button></details>
+      <section aria-labelledby="gates-heading"><h2 id="gates-heading">Current gates</h2><div id="gates"></div></section>
+      <details class="notices-panel"><summary>Unacknowledged notices <span id="notice-count"></span></summary><div id="notices"></div><button id="more-notices" type="button" hidden>Load more notices</button></details>
+      <div id="inbox" class="result-list" aria-busy="false"></div><button id="more-inbox" type="button" hidden>Load older results</button>
+      <button id="more-external" type="button" hidden>Load older external results</button>
+      <button id="more-theses" type="button" hidden>Load older theses</button>
+      <section id="legacy-section" hidden aria-labelledby="legacy-heading"><h2 id="legacy-heading">Legacy history</h2><p class="muted">Unknown provenance · original acceptance is legacy-unclassified.</p><div id="legacy-results"></div><button id="more-legacy" type="button" hidden>Load more legacy results</button></section>
+    </section>
+    <section id="detail-pane" class="detail-pane" aria-label="Research detail">
+      <button id="back-inbox" class="mobile-back" type="button">Back to Inbox</button>
+      <div id="watch-editor" hidden>
+        <h2 id="editor-heading">New watch</h2><p class="muted">Save a private question and its public scope. Execution requires separate authorization.</p>
+        <form id="watch-form">
+          <label for="theme-input">Theme</label><select id="theme-input" name="theme_id" required></select>
+          <label for="stage-input">AI Compute stage (optional)</label><select id="stage-input" name="stage_id"><option value="">All stages</option></select>
+          <label for="symbols-input">Company symbols</label><input id="symbols-input" name="symbols" maxlength="619" required aria-describedby="symbols-help"><p id="symbols-help" class="field-help">Use 1 to 20 symbols, separated by spaces or commas. Markets can differ.</p>
+          <label for="question-input">Private thesis question</label><textarea id="question-input" name="question" maxlength="600" rows="3" required></textarea>
+          <label for="trigger-input">Private trigger</label><textarea id="trigger-input" name="trigger" maxlength="600" rows="2" required></textarea>
+          <label for="component-input">Component (optional)</label><input id="component-input" name="component" maxlength="100">
+          <p id="editor-revision" class="muted"></p><div class="actions"><button class="primary" type="submit">Save watch</button><button id="cancel-edit" type="button">Cancel</button></div>
+        </form>
+      </div>
+      <div id="detail-summary"><div class="empty"><h2>Select a result</h2><p>Read the evidence, then choose a review action. Opening a result does not accept it.</p></div></div>
+      <section id="review-panel" hidden aria-labelledby="review-heading">
+        <h2 id="review-heading">Your review</h2><p id="review-gate" class="gate-note" hidden></p>
+        <p class="field-help">Received, Revisit, and Reject preserve prior accepted evidence and interpretation.</p>
+        <p id="thesis-review-help" class="field-help" hidden>Submit your own review. Source pins do not prove that a claim is correct.</p>
+        <form id="review-form"><label for="review-action">Review action</label><select id="review-action" required></select><label for="review-note">Reason</label><textarea id="review-note" rows="3" maxlength="1200" required></textarea><button id="submit-review" type="submit" class="primary">Submit review</button></form>
+      </section>
+      <div id="detail"></div>
+      <section id="review-history" hidden aria-labelledby="history-heading"><h2 id="history-heading">Review history</h2><p id="history-count" class="muted"></p><div id="history-items"></div><button id="load-history" type="button">Read complete journal</button></section>
+    </section>
+  </main>
+  <noscript>This workspace requires JavaScript. Private records do not load until you supply an access token.</noscript>
+</body>
+</html>
