@@ -1,6 +1,8 @@
 # Research update review prompt
 
 Use this prompt with a saved research brief and a new set of source documents.
+Apply `prompts/model-portable-research.md` when the caller runtime needs capability-specific instructions.
+Do not replace the machine-readable result contract with the narrative format below.
 
 ```text
 Compare the new evidence with my saved research baseline.

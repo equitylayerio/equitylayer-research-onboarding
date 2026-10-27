@@ -1,9 +1,6 @@
 # EquityLayer Research Onboarding
 
-An equity research harness for the AI you already use.
-
-Start with AI Compute across US, Taiwan, Japan, and Korea supply chains. Give your AI a research scope, check source-linked evidence, and review the result in your local dashboard.
-For the submission scope and demonstrated limits, read [the public product summary](docs/hackathon-product.md).
+Build a better investment decision system with your AI.
 
 This repository gives you a public, tool-neutral starting point for the EquityLayer workflow:
 
@@ -13,14 +10,33 @@ This repository gives you a public, tool-neutral starting point for the EquityLa
 
 It does not bundle live market data, private research packs, or the private product backend. It does not execute investment trades.
 
-## Start in 10 minutes
+## Choose a starting point
+
+For the unpublished installable candidate, see [tarball installation and upgrade](docs/installable-client.md).
+Its `equitylayer` command works outside the source checkout. This does not establish complete first-use or real-caller acceptance.
+The tarball contains selected user guides only. Repository examples, hackathon evidence, and optional payment tools below are not bundled.
 
 For an executable MCP workflow, use the [research client](docs/client.md). It reads the existing harness and saves a result for local review.
-The client has no payment or trading permissions. Founder submission materials and fresh seller access remain separate requirements.
+The client has no payment or trading permissions. The optional hackathon buyer is a separate component.
 Run `npm run research -- doctor` first. The hosted service may lack required research tools.
 Give your AI the [MCP onboarding prompt](prompts/mcp-onboarding.md) for this workflow.
-For topic-specific data-tool guidance and Codex / Claude Code configuration, use [research setup](docs/research-setup.md).
-It matches declared schema snapshots to company tasks and keeps missing access visible. It does not install or certify a provider.
+
+The local candidate now includes a [caller-owned execution CLI](docs/local-execution.md).
+It stores research jobs in private SQLite and requires explicit command and private-input approval before AI execution.
+An opt-in [local workspace](docs/local-workspace.md) now reads the same SQLite record and provides an Inbox with separate review actions.
+To connect your existing local stdio AI client, start with `equitylayer setup --session --workspace /absolute/private/new-workspace`.
+This route needs no native model configuration or inference budget. Prepare its private MCP connection from Watch detail.
+Controlled Inbox and Tracking browser checks use synthetic data. Complete caller-to-review and second-update acceptance remains open.
+See [the portable verification boundary](docs/local-verification-status.md) before treating a passing check as product acceptance.
+Use the [native setup check](docs/native-research-runtime.md#check-setup-before-research) to check declared Codex or Claude Code versions before creating a workspace.
+It does not invoke a model or verify authentication, model access, billing, or Inbox delivery.
+The [retained-source boundary](docs/local-verification-status.md#research-and-readable-sources) covers supported UTF-8 artifact text and explicit gaps for unsupported content.
+Legacy snapshots and method replays keep their original coverage. Text readability does not grant source rights or establish research quality.
+The local development candidate adds [finite scheduling](docs/local-scheduling.md), a gated [TWSE monthly source adapter](docs/local-twse-monthly-source.md), and a [continuous worker](docs/local-background-worker.md).
+Real native research, a second real update, other permitted sources, and external-user installation remain open.
+The separate public hackathon candidate excludes these unfinished local loop modules.
+Local [method artifacts](docs/local-method-artifacts.md) retain failure cases, candidate metadata, and frozen regression plans.
+These records do not establish evaluation success or an active method release.
 
 An optional [Solana research buyer](tools/x402-mcp-bridge/README.md) exposes one fixed Devnet research-purchase tool through MCP.
 It requires a separately configured local seller, signer, and explicit human approval. Installing it does not enable payment.
@@ -55,6 +71,9 @@ See the [illustrative AI compute example](examples/ai-compute.md). It shows stru
 ## Repository map
 
 - `client/`: executable MCP client with no package dependencies.
+- `client/local/`: candidate run contracts, SQLite ledger, and bounded execution. See [the local library boundaries](docs/local-ledger.md).
+- `client/local-cli.mjs`: opt-in local operations. See [configuration and recovery](docs/local-execution.md) and [finite scheduling](docs/local-scheduling.md). It installs no background service.
+- `client/workspace-cli.mjs`: local-only Inbox and review interface. See [startup and review](docs/local-workspace.md).
 - `docs/client.md`: connection, research, and local result instructions.
 - `examples/ai-compute-scope.json`: a fixed cross-market scope, not a current research report.
 - `tools/x402-mcp-bridge/`: optional Solana Devnet research buyer, tests, and fixed purchase policy.
@@ -69,10 +88,14 @@ See the [illustrative AI compute example](examples/ai-compute.md). It shows stru
 
 ## Relationship to EquityLayer
 
-This is the public onboarding layer. The private EquityLayer product adds durable workspaces, curated research packs, source-linked updates, change detection, and agent interfaces.
+The public onboarding prompts and API/MCP entrance supply research methods for the AI you already use.
+The unpublished local client candidate stores private questions, research, and separate human review decisions on your machine.
+It does not bundle the private hosted backend, source datasets, or curated commercial Research Packs.
+The published default branch can lag a development candidate. Verify the exact source or supplied archive before installation.
 
 The prompts are model-independent. Better models can improve synthesis and tool use, but the human remains responsible for the research question, source approval, materiality, and final judgment.
 
 ## License and risk
 
-The repository is available under the MIT License. Market and company information can become stale. Verify important claims against current primary sources before making a decision.
+The repository is available under the MIT License. The bundled Inter font uses the SIL Open Font License. See [font attribution](client/local/assets/README.md).
+Market and company information can become stale. Verify important claims against current primary sources before making a decision.

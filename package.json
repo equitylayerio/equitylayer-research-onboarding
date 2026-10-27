@@ -1,11 +1,40 @@
 {
   "name": "equitylayer-research-client",
-  "version": "0.1.0",
+  "version": "0.1.0-local.24",
   "private": true,
   "type": "module",
-  "engines": { "node": ">=22" },
+  "engines": { "node": ">=22.13" },
+  "bin": { "equitylayer": "bin/equitylayer.mjs" },
+  "files": [
+    "bin/equitylayer.mjs",
+    "client/*.mjs",
+    "client/local/*.mjs",
+    "client/local/ui/*.mjs",
+    "client/local/ui/workspace.html",
+    "client/local/ui/workspace.css",
+    "client/local/ui/workspace.js",
+    "client/local/assets/InterVariable.woff2",
+    "client/local/assets/OFL-Inter.txt",
+    "client/local/assets/README.md",
+    "prompts/model-portable-research.md",
+    "prompts/local-session-research.md",
+    "docs/installable-client.md",
+    "docs/first-use.md",
+    "docs/client.md",
+    "docs/local-execution.md",
+    "docs/local-method-artifacts.md",
+    "docs/local-verification-status.md",
+    "docs/native-research-runtime.md",
+    "docs/local-workspace.md",
+    "docs/local-scheduling.md",
+    "docs/local-background-worker.md",
+    "docs/local-twse-monthly-source.md",
+    "docs/local-thesis-tracking.md"
+  ],
   "scripts": {
     "research": "node client/cli.mjs",
-    "test": "node --test tests/*.test.mjs"
+    "research:local": "node client/local-cli.mjs",
+    "research:workspace": "node client/workspace-cli.mjs",
+    "test": "node --import ./tests/fixtures/owned-test-temp.mjs --test --test-concurrency=1 tests/*.test.mjs"
   }
 }

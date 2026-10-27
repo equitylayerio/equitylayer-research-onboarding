@@ -5,9 +5,6 @@ It requires Node.js 22 or later. It has no package dependencies.
 
 ## Start
 
-For a topic method, data-tool requirements, and client configuration, begin with [research setup](research-setup.md).
-Use your existing AI and approved data sources. No EquityLayer-hosted model is required.
-
 1. Run `npm test`.
 2. Run `npm run research -- doctor` to check required tools before you send research.
 3. Run `npm run research -- tools` to read the server's tool schemas after the check passes.
@@ -34,7 +31,7 @@ The `begin` and `finalize` commands also check required tools before they send y
 The `instrument` command checks its mapping tool separately. It is not required for the research workflow.
 
 The October 2, 2026 deployment added the required hosted tools. Two hosted begin/finalize checks passed with a public, hand-authored `SOURCE_NEEDED` draft.
-These checks verify execution and result delivery, not investment conclusions or payment. See [hosted verification](2026-10-02-hosted-verification.md).
+These historical checks verify execution and result delivery, not investment conclusions or payment. See [the public hosted record](https://github.com/equitylayerio/equitylayer-research-onboarding/blob/main/docs/2026-10-02-hosted-verification.md).
 This repository does not start a local backend. Use the hosted service or a separately supplied compatible server.
 
 ## Return a result to the local dashboard
@@ -81,10 +78,10 @@ The client can read a company-to-token mapping with `instrument` and an input su
 It cannot submit a quote, payment, signature, or order. It has no wallet or authorization-header options.
 It does not install tools or execute instructions contained in server responses.
 
-Solana x402 research purchase uses the separate [buyer bridge](../tools/x402-mcp-bridge/README.md).
-One local Devnet purchase settled. See [the verification record](2026-10-03-devnet-payment-verification.md).
-The [judge check](judge-check.md) verifies discovery and the existing transaction without a wallet.
-A later Codex-orchestrated SDK client completed one purchase through MCP stdio. See [the MCP purchase record](2026-10-03-mcp-purchase-verification.md).
+Solana x402 research purchase uses the separate [public buyer bridge](https://github.com/equitylayerio/equitylayer-research-onboarding/tree/main/tools/x402-mcp-bridge).
+One historical local Devnet purchase settled. See [the public verification record](https://github.com/equitylayerio/equitylayer-research-onboarding/blob/main/docs/2026-10-03-devnet-payment-verification.md).
+The [public judge check](https://github.com/equitylayerio/equitylayer-research-onboarding/blob/main/docs/judge-check.md) verifies discovery and the existing transaction without a wallet.
+A later Codex-orchestrated SDK client completed one purchase through MCP stdio. See [the public MCP purchase record](https://github.com/equitylayerio/equitylayer-research-onboarding/blob/main/docs/2026-10-03-mcp-purchase-verification.md).
 Native Claude or Codex connector installation remains untested.
 An instrument mapping is not a purchase receipt.
 This repository does not yet contain the complete self-hosted dashboard or seller backend.
