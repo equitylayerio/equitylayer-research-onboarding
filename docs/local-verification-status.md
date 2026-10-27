@@ -32,6 +32,12 @@ This result is not a trial of the unmodified default installed entrance, a curre
 Founder review, a second real update, and an unaided user's successful return remain incomplete.
 No synthetic run or interface check replaces those requirements.
 
+A separate October 26 trial used an unchanged local.23 installed MCP server, without the private submission launcher.
+It returned one initial research record in about 104 seconds, with no retry, timeout, or source fetch.
+The record survived reopening. Independent QC checked authenticated local HTTP reads and selected financial anchors.
+That trial used engineering-prepared retained sources and bounded caller instructions. It was not unaided onboarding or complete research acceptance.
+The result remains unreviewed. Source rights, complete currentness, a second update, and user pilots remain separate gates.
+
 ## Source checks and workers
 
 The fixed TWSE adapter and SEC submissions-index detector have deterministic parser, policy, scheduling, and failure tests.

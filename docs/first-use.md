@@ -162,6 +162,39 @@ equitylayer setup --workspace /absolute/private/new-workspace --answers /absolut
 The existing method validator checks its hashes and candidate metadata. That does not approve its content or prove financial quality.
 Non-interactive input without an answers file fails instead of waiting indefinitely.
 
+## Add your retained source document
+
+For a financial release or filing body already on your computer, use the installed document command:
+
+```sh
+equitylayer documents --workspace /absolute/private/workspace --file /absolute/retained-release.html
+```
+
+The prompts collect the original HTTPS URL, covered watch symbols, original retrieval time, source class, period, media type, and response status.
+Do not guess the retrieval time or response status. This route requires your retained retrieval record.
+Leave an unknown publication time or reporting period as `-`. Import time does not become publication time or original retrieval time.
+Use UTF-8 HTML, text, CSV, XML, or JSON up to 2 MB. PDF and binary documents are not supported.
+The command rejects linked files and files writable by other users. It copies exact bytes, not a link to the original file.
+
+Rights default to `HOLD`. Documented `ALLOWED` local use requires separate confirmation.
+Candidate-method permission is a separate choice. No choice grants commercial reuse or redistribution rights.
+The declarations do not authenticate the issuer, dates, HTTP response, company coverage, or permission.
+No normalized financial facts or verified evidence labels are created.
+The source age limit measures time since the declared retrieval. It does not establish current company coverage.
+
+After allowed intake, open the returned workspace command. Select the document in **Research with my AI** in Watch detail.
+Held rights or missing candidate-method permission block source use. The command cannot remove those gates.
+The document remains an independent retained observation, not a new-period claim, correction, accepted baseline, or adopted thesis.
+Intake starts no model, fetch, monitor, job, payment, or trade.
+
+Repeat the same command and metadata to recover after interruption. Retention and initial local policy commit in one SQLite transaction.
+An exact repeat preserves the first observation time. A changed document or metadata at the same URL requires separate correction review.
+A changed policy requires separate permission review. This command cannot replace either history.
+For agent input, supply `--answers /absolute/private/document-metadata.json`.
+The metadata fields match the prompts: `canonical_url`, `source_class`, `symbols`, `retrieved_at`, `published_at`, `source_period`, `content_type`, `http_status`, `max_source_age_days`, `rights_status`, `rights_reference`, and `allow_candidate_trials`.
+Use JSON `null` for unknown publication time and reporting period. `HOLD` requires a null permission reference and false candidate permission.
+An `ALLOWED` input also requires `--confirm-local-source-use`. Keep the file private and do not include credentials.
+
 ## Add a permitted source
 
 After setup, configure a source for that watch without assembling separate policy and schedule files:

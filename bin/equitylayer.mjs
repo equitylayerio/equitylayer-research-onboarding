@@ -12,6 +12,7 @@ const HELP = `EquityLayer research client
   equitylayer setup --session --workspace ABSOLUTE_NEW_PRIVATE_DIRECTORY
   equitylayer setup --workspace ABSOLUTE_NEW_PRIVATE_DIRECTORY
   equitylayer sources --workspace ABSOLUTE_PRIVATE_DIRECTORY
+  equitylayer documents --workspace ABSOLUTE_PRIVATE_DIRECTORY --file ABSOLUTE_RETAINED_FILE
   equitylayer --version
 
 Research connects to the public API/MCP. Send public research only.
@@ -20,7 +21,7 @@ Workspace serves a local review interface. It cannot invoke AI, pay, or trade.
 This candidate does not install models or a background service.
 Read docs/installable-client.md in the installed package before setup.
 `;
-const ROUTES = Object.freeze({ research: "../client/cli.mjs", local: "../client/local-cli.mjs", workspace: "../client/workspace-cli.mjs", session: "../client/session-cli.mjs", setup: "../client/setup-cli.mjs", sources: "../client/source-setup-cli.mjs" });
+const ROUTES = Object.freeze({ research: "../client/cli.mjs", local: "../client/local-cli.mjs", workspace: "../client/workspace-cli.mjs", session: "../client/session-cli.mjs", setup: "../client/setup-cli.mjs", sources: "../client/source-setup-cli.mjs", documents: "../client/documents-cli.mjs" });
 
 export function supportedNode(version) {
   const match = /^(\d+)\.(\d+)\.(\d+)$/.exec(version);

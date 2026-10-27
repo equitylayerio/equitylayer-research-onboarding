@@ -391,9 +391,46 @@ test("default help does not create a workspace, connect, or authorize execution"
   assert.deepEqual(readdirSync(cwd), before);
 });
 
-for (const route of ["research", "local", "workspace", "setup", "sources", "session"]) test(`installed ${route} help loads its complete module graph`, () => {
+for (const route of ["research", "local", "workspace", "setup", "sources", "session", "documents"]) test(`installed ${route} help loads its complete module graph`, () => {
   const result = call(route, "--help"); assert.equal(result.status, 0);
   assert.ok(result.stdout.length > 100); assert.doesNotMatch(result.stderr, /ERR_MODULE_NOT_FOUND|ENOENT/);
+});
+
+test("installed document command retains an allowed body for session selection and exact replay", async t => {
+  const workspace = join(root, "document workspace"), answers = join(root, "document session.json"), method = join(root, "document method.json");
+  writeFileSync(answers, JSON.stringify({ focus: "pcb_ccl", symbols: ["TTMI", "2383.TW"], question: "Synthetic question.", trigger: "Synthetic release." }), { mode: 0o600 });
+  writeFileSync(method, JSON.stringify(methodBundle()), { mode: 0o600 });
+  const setupCall = call("setup", "--session", "--workspace", workspace, "--answers", answers, "--method-bundle", method);
+  assert.equal(setupCall.status, 0); const setupValue = JSON.parse(setupCall.stdout);
+  const file = join(root, "retained document.html"), metadataFile = join(root, "document metadata.json");
+  writeFileSync(file, "<h1>Synthetic retained statement</h1><p>Not investment evidence.</p>", { mode: 0o600 });
+  writeFileSync(metadataFile, JSON.stringify({ canonical_url: "https://example.test/installed-document", source_class: "issuer_release", symbols: ["TTMI"],
+    retrieved_at: new Date(Date.now() - 1000).toISOString(), published_at: null, source_period: null, content_type: "text/html",
+    http_status: 200, rights_status: "ALLOWED", rights_reference: "Synthetic local use only.", allow_candidate_trials: true, max_source_age_days: 30 }), { mode: 0o600 });
+  const args = ["documents", "--workspace", workspace, "--file", file, "--answers", metadataFile, "--confirm-local-source-use"];
+  const first = call(...args); assert.equal(first.status, 0); const initial = JSON.parse(first.stdout);
+  const second = call(...args); assert.equal(second.status, 0); assert.equal(JSON.parse(second.stdout).reused, true);
+  assert.deepEqual(JSON.parse(second.stdout).reference, initial.reference);
+  const { ResearchLedger } = await import(pathToFileURL(join(installed, "client/local/ledger.mjs")));
+  const ledger = new ResearchLedger(workspace); try {
+    const choices = ledger.workspaceSessionOptions(setupValue.watch_id);
+    assert.equal(choices.sources.items.length, 1); assert.equal(choices.sources.items[0].gate_code, null);
+    assert.deepEqual(ledger.source(initial.reference.source_event_id).bytes, readFileSync(file));
+    assert.equal(ledger.workspaceStatus().counts.requests, 0); ledger.verifyIntegrity();
+  } finally { ledger.close(); }
+  const preparation = call("session", "prepare", "--workspace", workspace, "--watch", setupValue.watch_id, "--revision", "1",
+    "--method", methodBundle().content_sha256, "--source-event", initial.reference.source_event_id,
+    "--allow-private-context", "--allow-candidate-method");
+  assert.equal(preparation.status, 0);
+  const client = await installedTaskClient(t, JSON.parse(preparation.stdout));
+  const manifest = (await client.tool("get_research_task")).result.structuredContent;
+  assert.equal(manifest.sources.length, 1); const pin = manifest.sources[0];
+  assert.equal(pin.sha256, initial.reference.artifact_sha256);
+  const body = await client.tool("get_research_task", { view: "read", source_event_id: pin.source_event_id, sha256: pin.sha256,
+    representation: "readable", representation_sha256: pin.readable.representation_sha256, offset: 0 });
+  assert.equal(body.result.isError, false); assert.match(body.result.structuredContent.text, /Synthetic retained statement/);
+  assert.equal(body.result.structuredContent.evidence_verified, false);
+  await client.close();
 });
 
 test("installed session prepares and returns research through its own absolute stdio entry", async t => {

@@ -24,6 +24,7 @@ import { EXTERNAL_SESSION_SCHEMA, verifyExternalSessions, prepareExternalSession
   submitExternalSession, externalSessionRecord, externalSessionStatus, checkExternalAcceptance, externalSessionOptions } from "./external-session-store.mjs";
 import { EXTERNAL_REVIEW_SCHEMA, verifyExternalReviews, reviewExternalSession } from "./external-session-review.mjs";
 import { researchSelection, selectedResearchBaseline, researchBaselineContext, researchTarget, checkResearchRights } from "./research-selection.mjs";
+import { DocumentError, documentPlan } from "./document-intake.mjs";
 
 const MAX_JSON_BYTES = 2_000_000;
 const APPLICATION_ID = 1162955825;
@@ -498,7 +499,7 @@ export class ResearchLedger {
       return output;
     } catch (error) {
       if (!committed) { try { this.#db.exec("ROLLBACK"); } catch { /* The caller must inspect durable state after a storage error. */ } }
-      if (error instanceof LedgerError || error instanceof ExternalSessionError || error instanceof ReferenceBridgeError || error instanceof ResultFileError || error instanceof LegacyWorkspaceError || error instanceof EventPlanError || error instanceof NormalizedFactError || error instanceof MethodArtifactError || error instanceof ScheduleError || error instanceof ThesisError || error.name === "RunContractError") throw error;
+      if (error instanceof DocumentError || error instanceof LedgerError || error instanceof ExternalSessionError || error instanceof ReferenceBridgeError || error instanceof ResultFileError || error instanceof LegacyWorkspaceError || error instanceof EventPlanError || error instanceof NormalizedFactError || error instanceof MethodArtifactError || error instanceof ScheduleError || error instanceof ThesisError || error.name === "RunContractError") throw error;
       throw new LedgerError("STORAGE_WRITE_UNCERTAIN", "Read durable state before retrying the local operation.", { cause: error });
     }
   }
@@ -1290,6 +1291,30 @@ export class ResearchLedger {
   retainSource(event, artifact, bytes) {
     const reference = verifySourceReference(event, artifact, bytes); const eventJson = json(event); const artifactJson = json(artifact);
     return this.#transaction("source", () => this.#retainSource(reference, eventJson, artifactJson, bytes));
+  }
+  retainLocalDocument({ watch_id, scope_revision, metadata, bytes, confirm_local_use = false }) {
+    id(watch_id); integer(scope_revision, 1);
+    return this.#transaction("document_intake", () => {
+      verifyRetainedSnapshot(this.#db);
+      const watch = this.watch(watch_id);
+      if (!watch || watch.current_revision !== scope_revision) fail("DOCUMENT_SCOPE_CHANGED", "Read the current watch before document intake.");
+      const scope = watch.revisions.find(revision => revision.revision === scope_revision).scope;
+      let plan = documentPlan(metadata, bytes, scope, new Date(this.#now()).toISOString(), confirm_local_use);
+      const prior = this.#all("SELECT e.event_id FROM source_events e JOIN artifacts a ON a.artifact_id=e.artifact_id WHERE json_extract(a.metadata_json,'$.source_id')=?", plan.artifact.source_id);
+      if (prior.some(row => row.event_id !== plan.event.source_event_id)) fail("DOCUMENT_VERSION_REVIEW_REQUIRED", "Use the correction review process for changed documents at the same URL.");
+      if (prior.length) {
+        const saved = this.source(plan.event.source_event_id);
+        plan = documentPlan(metadata, bytes, scope, saved.event.observed_at, confirm_local_use);
+        if (canonicalJson(saved.event) !== canonicalJson(plan.event)) fail("REFERENCE_CONFLICT", "Preserve the retained document identity.");
+      }
+      const current = this.sourcePolicy(watch_id, plan.policy.source_id);
+      if (current && canonicalJson(current.policy) !== canonicalJson(plan.policy)) fail("DOCUMENT_POLICY_REVIEW_REQUIRED", "Review changed source permissions separately.");
+      const reference = this.#retainSource(plan.reference, json(plan.event), json(plan.artifact), bytes);
+      if (!current) this.#write("INSERT INTO source_policies VALUES(?,?,?,?,?)", watch_id, plan.policy.source_id, 1, contentHash(plan.policy), json(plan.policy));
+      return { reference, source_id: plan.policy.source_id, reused: prior.length > 0 && Boolean(current),
+        rights_status: plan.policy.rights_status, candidate_method_use: plan.policy.allow_candidate_trials,
+        configured_symbols: Object.keys(plan.policy.issuer_map), published_at_known: plan.artifact.published_at !== null };
+    });
   }
   #retainSource(reference, eventJson, artifactJson, bytes) {
       const priorArtifact = this.#get("SELECT * FROM artifacts WHERE artifact_id=?", reference.source_artifact_id);

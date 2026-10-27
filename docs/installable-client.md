@@ -65,6 +65,8 @@ Use the explicit private session link only on your own machine. Do not share it.
 Stop the foreground workspace with Ctrl-C. Installation does not start a background worker or an OS service.
 Research methods and source approvals are separate from installing code. Missing or held evidence remains a named gate.
 Setup generates the private JSON inputs for you. `equitylayer sources --workspace /absolute/private/workspace` adds a permitted source configuration.
+For a retained financial document, use `equitylayer documents --workspace /absolute/private/workspace --file /absolute/retained-release.html`.
+The [first-use guide](first-use.md#add-your-retained-source-document) explains metadata, permission, and correction boundaries.
 It supports the fixed TWSE API or an existing private connector feed. It does not grant verified rights or start tracking.
 Follow [first-use source setup](first-use.md#add-a-permitted-source) before observation. Other live connectors and the complete real caller flow remain incomplete.
 
@@ -278,7 +280,13 @@ Offline package checks do not prove unaided customer use or a second real financ
 
 The unpublished `0.1.0-local.23` candidate adds portable verification guidance and repairs links that depended on private audit records.
 It also bundles the method-artifact guide required by the execution guide. The local MCP reports local.23, with unchanged tool behavior.
-Preserve the fixed local.20, local.21, and local.22 archives. This documentation candidate does not authorize publication or a new model call.
+
+The unpublished `0.1.0-local.24` candidate adds guided local document intake through `equitylayer documents`.
+It retains exact source bytes and initial local permissions in one SQLite transaction, without normalized facts or automatic research.
+Exact replay preserves history. Changed content at the same URL or changed permissions requires separate review.
+The first-use guide describes supported files, caller declarations, and the source-selection step.
+This candidate changes no database schema. It does not include a paid Pack or grant source rights.
+Preserve the fixed local.20, local.21, local.22, and local.23 archives. This candidate does not authorize publication or a new model call.
 
 The unpublished `0.1.0-local.22` development candidate adds `local schedule-resume-observe` for an exact stopped observation configuration.
 It saves the next immutable revision without starting work or changing source permission. Its local MCP reports local.22.

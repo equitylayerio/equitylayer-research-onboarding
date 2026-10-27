@@ -82,7 +82,7 @@ export function createSessionMcp({ ledger, context_id, consent }) {
             typeof params.clientInfo.name !== "string" || typeof params.clientInfo.version !== "string") return errorResponse(id, -32602, "Invalid initialization parameters.");
         initialized = true;
         return result({ protocolVersion: PROTOCOLS.has(params.protocolVersion) ? params.protocolVersion : SESSION_MCP_PROTOCOL,
-          capabilities: { tools: {} }, serverInfo: { name: "equitylayer-local-research", version: "0.1.0-local.23" },
+          capabilities: { tools: {} }, serverInfo: { name: "equitylayer-local-research", version: "0.1.0-local.24" },
           instructions: "Call get_research_task for the manifest first. Read private_context and method with pinned section hashes. Search and read retained source ranges before making claims. Read citation_dates before citing. Partial reads are not complete evidence. Report processing limits separately from missing issuer data. Only the human can accept research. This server cannot invoke models, fetch sources, pay, or trade." });
       }
       if (!ready) return errorResponse(id, -32600, "Initialize the connection first.");
