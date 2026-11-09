@@ -40,7 +40,10 @@ A Research Pack is a curated thesis with the variables it tracks, the evidence, 
 2. `get_research_pack`: read the thesis, evidence, tracked variables and next check.
 3. `create_research_follow`, then `check_research_follow` with the saved Follow Card whenever you want an update.
 
-The current research themes are **CPO, Physical AI and space infrastructure**. Their first Packs are in review and not published yet.
+Two ways to use it: track your own thesis, or follow a Research Pack EquityLayer publishes.
+
+- **Your own thesis:** CPO and custom ASIC have readings today. Space is being added. Physical AI variables are listed, but most readings are withheld.
+- **Research Packs:** none is published yet. The first, CPO and space, are being prepared.
 
 ## Paste this into your AI
 
