@@ -1,78 +1,66 @@
-# EquityLayer Research Onboarding
+# EquityLayer research onboarding
 
-An equity research harness for the AI you already use.
+**Fundamental research layer for AI agents.**
 
-Start with AI Compute across US, Taiwan, Japan, and Korea supply chains. Give your AI a research scope, check source-linked evidence, and review the result in your local dashboard.
-For the submission scope and demonstrated limits, read [the public product summary](docs/hackathon-product.md).
+EquityLayer gives the AI you already use one MCP connection for investment research. Your agent can track the variables behind your own thesis, or follow a Research Pack we publish, and tell you when something moved. You keep the judgment. EquityLayer never says what to buy, sell, size or time.
 
-This repository gives you a public, tool-neutral starting point for the EquityLayer workflow:
+This repository is the public starting point: how to connect, a prompt to paste into your AI, and templates for your own research notes.
 
-1. **Discover** the research question that can change your view.
-2. **Build** a source map, company roles, and decision-relevant metrics.
-3. **Verify** each update against dated evidence, limits, and falsifiers.
+## Connect
 
-It does not bundle live market data, private research packs, or the private product backend. It does not execute investment trades.
+Add one MCP server to your AI client. No account is needed to read public research.
 
-## Start in 10 minutes
+```text
+https://equitylayer.io/mcp      (Streamable HTTP)
+```
 
-For an executable MCP workflow, use the [research client](docs/client.md). It reads the existing harness and saves a result for local review.
-The client has no payment or trading permissions. Founder submission materials and fresh seller access remain separate requirements.
-Run `npm run research -- doctor` first. The hosted service may lack required research tools.
-Give your AI the [MCP onboarding prompt](prompts/mcp-onboarding.md) for this workflow.
-For topic-specific data-tool guidance and Codex / Claude Code configuration, use [research setup](docs/research-setup.md).
-It matches declared schema snapshots to company tasks and keeps missing access visible. It does not install or certify a provider.
+- **Claude Code:** `claude mcp add --transport http equitylayer https://equitylayer.io/mcp`
+- **Codex, Cursor, Claude Desktop and others:** add a remote HTTP MCP server with the URL above.
+- **Agents without MCP:** read [`https://equitylayer.io/llms.txt`](https://equitylayer.io/llms.txt).
 
-An optional [Solana research buyer](tools/x402-mcp-bridge/README.md) exposes one fixed Devnet research-purchase tool through MCP.
-It requires a separately configured local seller, signer, and explicit human approval. Installing it does not enable payment.
-See the [release status](docs/release-status.md) for verified behavior and remaining gates.
-For a short product walkthrough, use the [hackathon review guide](docs/hackathon-review.md).
-Use the [wallet-free judge check](docs/judge-check.md) to verify MCP discovery and the existing Devnet payment.
-See [trading connections](docs/trading-connections.md) for the Jupiter handoff, Robinhood Chain evidence, and the separate broker MCP plan. Research payments do not authorize investment trades.
-Use [the multi-chain judge check](docs/chain-review.md) to read canonical Robinhood Chain contract evidence without a wallet.
+`https://equitylayer.io/mcp/full` lists every tool on the same server. It is not a second connection.
 
-1. Open [the onboarding prompt](prompts/onboarding.md).
-2. Copy it into the AI tool that you already use.
-3. Answer its questions. Start with one theme and one decision.
-4. Save the output in [the research brief template](templates/research-brief.md).
-5. Use [the review prompt](prompts/review-update.md) when new evidence arrives.
+## Two ways to use it
 
-Do not paste passwords, API keys, private account data, or material non-public information into a model.
+### 1. Bring your own thesis
 
-## What good output looks like
+You state a thesis in your own words. Your agent maps it to the variables EquityLayer tracks, you agree what each one should show, and your agent checks them on a schedule.
 
-A useful research workspace has:
+1. `plan_thesis_tracking`: give it your thesis, and the companies or terms you mean. It returns candidate variables with what each can't show, plus gaps where nothing in the catalog measures your point.
+2. Write the four parts with your agent: **hypothesis**, **why**, **tracking** (each link, its variables and what a reading means) and **wrong_if** (what would make you admit it's wrong). The thresholds are your judgment.
+3. `check_thesis_harness`: returns each link's status (`not_due`, `seen`, `against`, `late`, `no_data`), which `wrong_if` conditions fired, and what needs a person. Save the `next_baseline` it returns and pass it back next time to see only what changed.
 
-- one decision question, not a broad sector summary;
-- explicit company roles in the value chain;
-- primary sources for material claims;
-- a small set of metrics with units and dates;
-- unknowns and counterevidence;
-- a condition that would change the view;
-- a dated comparison baseline for the next review.
+You keep the harness and the baseline. EquityLayer stores neither. The full loop is in the skill at [`https://equitylayer.io/skills/thesis-harness.md`](https://equitylayer.io/skills/thesis-harness.md).
 
-See the [illustrative AI compute example](examples/ai-compute.md). It shows structure only. It is not current research and does not recommend a security.
+### 2. Follow a Research Pack
 
-## Repository map
+A Research Pack is a curated thesis with the variables it tracks, the evidence, and what would prove it wrong.
 
-- `client/`: executable MCP client with no package dependencies.
-- `docs/client.md`: connection, research, and local result instructions.
-- `examples/ai-compute-scope.json`: a fixed cross-market scope, not a current research report.
-- `tools/x402-mcp-bridge/`: optional Solana Devnet research buyer, tests, and fixed purchase policy.
-- `docs/release-status.md`: verification evidence and submission boundaries.
+1. `list_registry`: find current Packs. An empty list means no Pack is published yet; your agent should say so, not substitute something else.
+2. `get_research_pack`: read the thesis, evidence, tracked variables and next check.
+3. `create_research_follow`, then `check_research_follow` with the saved Follow Card whenever you want an update.
 
-- `prompts/onboarding.md`: create the first research workspace.
-- `prompts/review-update.md`: compare new evidence with the saved baseline.
-- `templates/research-brief.md`: record the decision question and evidence boundary.
-- `templates/source-map.md`: define approved sources and escalation rules.
-- `templates/tracking-dashboard.md`: track only decision-relevant metrics.
-- `examples/ai-compute.md`: a synthetic example of the format.
+The current research themes are **CPO, Physical AI and space infrastructure**. Their first Packs are in review and not published yet.
 
-## Relationship to EquityLayer
+## Paste this into your AI
 
-This is the public onboarding layer. The private EquityLayer product adds durable workspaces, curated research packs, source-linked updates, change detection, and agent interfaces.
+Start with [`prompts/mcp-onboarding.md`](prompts/mcp-onboarding.md). It sets the boundaries above and walks your agent through either path.
 
-The prompts are model-independent. Better models can improve synthesis and tool use, but the human remains responsible for the research question, source approval, materiality, and final judgment.
+## What's here
+
+- `prompts/mcp-onboarding.md`: the prompt to paste into your AI.
+- `prompts/onboarding.md`: set up your first research workspace without any tools.
+- `prompts/review-update.md`: compare new evidence with a saved baseline.
+- `templates/`: a research brief, a source map and a tracking dashboard for your own notes.
+- `archive/2026-10/`: the October 2026 workflow (research client, Devnet payment demo, trading connections). It no longer matches the service and is kept for the record only.
+
+## Boundaries
+
+- Research, not advice. No trade instructions, target prices, position sizes or timing.
+- A person decides. Tool results that need judgment say so.
+- Data comes from official sources with dates. Readings from some company decks are withheld until their rights are reviewed; the tools say when.
+- No wallet, broker or payment permission is needed or requested.
 
 ## License and risk
 
-The repository is available under the MIT License. Market and company information can become stale. Verify important claims against current primary sources before making a decision.
+MIT License. Market and company information can become stale. Verify important claims against current primary sources before you rely on them.
