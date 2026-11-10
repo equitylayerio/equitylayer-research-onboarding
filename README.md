@@ -43,7 +43,7 @@ A Research Pack is a curated thesis with the variables it tracks, the evidence, 
 Two ways to use it: track your own thesis, or follow a Research Pack EquityLayer publishes.
 
 - **Your own thesis:** CPO and custom ASIC have readings today. Space is being added. Physical AI variables are listed, but most readings are withheld.
-- **Research Packs:** none is published yet. The first, CPO and space, are being prepared.
+- **Research Packs:** the first, on CPO, is published (`taiwan-optical-revenue-vs-cpo-guidance`). Space is being prepared.
 
 ## Paste this into your AI
 
