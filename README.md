@@ -47,7 +47,7 @@ Two ways to use it: track your own thesis, or follow a Research Pack EquityLayer
 
 ## Paste this into your AI
 
-Start with [`prompts/mcp-onboarding.md`](prompts/mcp-onboarding.md). It sets the boundaries above and walks your agent through either path.
+Start with [`prompts/mcp-onboarding.md`](prompts/mcp-onboarding.md). It sets the boundaries above and guides you in four decisions: sector, how to follow it (curated readings or your own view), one card to approve, and how often to check.
 
 ## What's here
 
