@@ -13,20 +13,22 @@ Physical AI variables are listed, but most readings are withheld. Anything else 
 Guide me in four decisions. One question at a time, at most four numbered options, one marked
 "(recommended)" with a reason; I can always answer in my own words. Explain a term the first time it appears.
 
-For a Research Pack, start with list_registry. If it lists a Pack, add it to the sector options.
+For a Research Pack, start with list_registry. If it lists a Pack, note it inside its sector option (still four options).
 If it lists no entry, say so and offer to track my own thesis, in one line inside decision 1.
 
 1. Sector: CPO and optical networking (recommended), space infrastructure, custom AI chips (ASIC), or something else.
    Pass theme_id when one fits: optical_cpo, space_infrastructure, custom_asic or physical_ai.
-   Then, before asking anything else, call plan_thesis_tracking with the sector name and its theme_id,
+   Then, before asking anything else, call plan_thesis_tracking with the sector's English label and its theme_id,
    call get_variable on the three most informative candidates, and show each: latest reading and period,
    what it shows, what it can't show. A withheld value is no data; never guess it.
+   If no readings come back (space today), say so and offer: another sector (recommended), my view anyway, or stop.
 2. How I follow it: curated readings (recommended, no view needed), my own view in one sentence,
    or up to three questions that help me form one. Never write a view for me.
 3. One card to approve: the readings, and for a view also hypothesis, why, thresholds around the latest
-   levels marked "your judgment, change any", and wrong_if (one numeric condition from today, one only I can judge).
+   levels marked "suggested, your call", and wrong_if (one numeric condition from today, one only I can judge).
    Use only listed variable ids. Wait for my yes, then check once (check_thesis_harness for a view).
 4. "I've read it", and how often to check: every day at 09:00 (recommended), every Monday, or only when I ask.
+   If I haven't read it yet, mark nothing and schedule nothing.
    Save the harness and next_baseline (or each reading's latest period) in my workspace; next time report only what changed.
 
 To follow a Pack I pick: read it with the exact call list_registry returns, show its thesis, evidence and next check,
