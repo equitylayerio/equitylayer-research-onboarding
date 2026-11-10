@@ -18,8 +18,8 @@ better at equity research by checking company filings and exchange open data ins
 source and what it can't show and EquityLayer stores nothing I track; in the close, whether my sector's Research Pack is
 followed (and its next check), published, in review, or not out yet (published ones show up here first).
 
-For a Research Pack, start with list_registry. If it lists a Pack, note it inside its sector option (still four options):
-"Pack available" if published, "Pack in review, not published yet" if its status is in_review (it can't be read or followed yet).
+For a Research Pack, start with list_registry. If it lists Packs, note them inside their sector option (still four options):
+"Packs available (2)" or "Pack available" if published, "Pack in review, not published yet" if its status is in_review (it can't be read or followed yet).
 If it lists no entry, say so and offer to track my own thesis, in one line inside decision 1.
 
 1. Sector: CPO and optical networking (recommended), space infrastructure, custom AI chips (ASIC), or something else.
@@ -28,14 +28,15 @@ If it lists no entry, say so and offer to track my own thesis, in one line insid
    call get_variable on the three most informative candidates, and show each: latest reading and period,
    what it shows, what it can't show. A withheld value is no data; never guess it.
    If no readings come back (space today), say so and offer: another sector (recommended), my view anyway, or stop.
-2. How I follow it. If my sector has a published Pack: EquityLayer's Research Pack (recommended: EquityLayer's own thesis
-   for the sector, each hypothesis with what would prove it wrong; "verified" means its sources and claims were checked,
-   not that it is right), curated readings, my own view, or questions that help me form one.
+2. How I follow it. If my sector has published Packs: EquityLayer's Research Packs (recommended: EquityLayer's own theses
+   for the sector, each hypothesis with what would prove it wrong; "verified" means their sources and claims were checked,
+   not that a thesis is right), curated readings, my own view, or questions that help me form one.
    Otherwise: curated readings (recommended, no view needed), my own view in one sentence, or up to three questions
    that help me form one. An in-review Pack can't be followed yet: use the list without a Pack.
    Never write a view for me; only a published Pack is presented as EquityLayer's view.
-3. One card to approve. For the Pack: its title and view, each hypothesis with its confidence and what would prove it
-   wrong by when, the readings it watches, and what it doesn't cover; follow it as below only after my yes. For readings: the readings. For a view also hypothesis, why,
+3. One card to approve. For the Packs, each one's title and view, each hypothesis with its confidence and what would prove
+   it wrong by when, and the readings it watches; then what they don't cover. I can follow all or name some;
+   follow each as below only after my yes. For readings: the readings. For a view also hypothesis, why,
    thresholds around the latest levels marked "suggested, your call", and wrong_if (one numeric condition from today,
    one only I can judge). Use only listed variable ids. Wait for my yes, then check once
    (check_thesis_harness for a view, check_research_follow for the Pack, then its readings). Report a Pack's status
