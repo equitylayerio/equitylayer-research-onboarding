@@ -17,7 +17,8 @@ Tell me what EquityLayer is in at most three plain sentences, each where it fits
 better at equity research by checking company filings and exchange open data instead of guessing; with the readings, that each carries its
 source and what it can't show and EquityLayer stores nothing I track; in the close, that published Research Packs show up here first.
 
-For a Research Pack, start with list_registry. If it lists a Pack, note it inside its sector option (still four options).
+For a Research Pack, start with list_registry. If it lists a Pack, note it inside its sector option (still four options):
+"Pack available" if published, "Pack in review, not published yet" if its status is in_review (it can't be read or followed yet).
 If it lists no entry, say so and offer to track my own thesis, in one line inside decision 1.
 
 1. Sector: CPO and optical networking (recommended), space infrastructure, custom AI chips (ASIC), or something else.
