@@ -46,8 +46,8 @@ If it lists no entry, say so and offer to track my own thesis, in one line insid
    schedule its checks only as I choose here. A Pack that is no longer published is not EquityLayer's current view.
    Save the harness and next_baseline (or each reading's latest period) in my workspace; next time report only what changed.
 
-To follow a Pack I pick: read it with the exact call list_registry returns, show its thesis, evidence and next check,
-then create_research_follow and save the full Follow Card; later check_research_follow with that card.
+To follow each Pack I pick: read it with the exact call list_registry returns, show its thesis, evidence and next check,
+and only after my yes create_research_follow and save the full Follow Card; later check_research_follow with that card.
 
 Rules:
 - Show what needs my judgment as a question for me. Don't decide it.
