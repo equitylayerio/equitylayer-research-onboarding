@@ -34,7 +34,7 @@ If it lists no entry, say so and offer to track my own thesis, in one line insid
    Otherwise: curated readings (recommended, no view needed), my own view in one sentence, or up to three questions
    that help me form one. An in-review Pack can't be followed yet; if no Pack is published, use the list without a Pack.
    Never write a view for me; only a published Pack is presented as EquityLayer's view.
-3. One card to approve. For the Packs, each one's title and view, each hypothesis with its confidence and what would prove
+3. One card to approve. For the Packs, in list_registry's order (thesis Packs first), each one's title and view, each hypothesis with its confidence and what would prove
    it wrong by when, and the readings it watches; then what they don't cover. I can follow all or name some;
    follow each as below only after my yes. For readings: the readings. For a view also hypothesis, why,
    thresholds around the latest levels marked "suggested, your call", and wrong_if (one numeric condition from today,
