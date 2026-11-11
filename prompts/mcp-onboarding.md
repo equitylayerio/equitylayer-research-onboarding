@@ -22,12 +22,15 @@ For a Research Pack, start with list_registry. If it lists Packs, note them insi
 "Packs available" with how many, or "Pack available", if published, "Pack in review, not published yet" if its status is in_review (it can't be read or followed yet).
 If it lists no entry, say so and offer to track my own thesis, in one line inside decision 1.
 
-1. Sector: CPO and optical networking (recommended), space infrastructure, custom AI chips (ASIC), or something else.
-   Pass theme_id when one fits: optical_cpo, space_infrastructure, custom_asic or physical_ai.
-   Then, before asking anything else, call plan_thesis_tracking with the sector's English label and its theme_id,
+1. Sector: CPO and optical networking (recommended), custom AI chips (ASIC), or something else (my own thesis).
+   Then one line, not an option: "Coming next: space infrastructure."
+   Pass theme_id when one fits: optical_cpo, custom_asic or physical_ai.
+   Then, before asking anything else, lead with EquityLayer's theses: if the sector has published Packs, show each
+   first (registry order) as its title and a one-sentence view. Then the evidence: call plan_thesis_tracking
+   with the sector's English label and its theme_id (with Packs, prefer the variables they watch),
    call get_variable on the three most informative candidates, and show each: latest reading and period,
    what it shows, what it can't show. A withheld value is no data; never guess it.
-   If no readings come back (space today), say so and offer: another sector (recommended), my view anyway, or stop.
+   If no readings come back, say so and offer: another sector (recommended), my view anyway, or stop.
 2. How I follow it. If my sector has published Packs: EquityLayer's Research Packs (recommended: EquityLayer's own theses
    for the sector, each hypothesis with what would prove it wrong; "verified" means their sources and claims were checked,
    not that a thesis is right), curated readings, my own view, or questions that help me form one.
