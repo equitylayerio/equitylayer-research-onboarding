@@ -50,7 +50,9 @@ If it lists no entry, say so and offer to track my own thesis, in one line insid
    Save the harness and next_baseline (or each reading's latest period) in my workspace; next time report only what changed.
 
 To follow each Pack I pick: read it with the exact call list_registry returns, show its thesis, evidence and next check,
-and only after my yes create_research_follow and save the full Follow Card; later check_research_follow with that card.
+and only after my yes create_research_follow and save the full Follow Card. For scheduled checks, call what_changed once
+with every saved Follow Card and harness, and tell me its headline first. Where this client draws MCP Apps, show Packs
+with show_research_pack_card.
 
 Rules:
 - Show what needs my judgment as a question for me. Don't decide it.
