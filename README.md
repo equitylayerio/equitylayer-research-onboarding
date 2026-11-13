@@ -40,6 +40,12 @@ A Research Pack is a curated thesis with the variables it tracks, the evidence, 
 2. `get_research_pack`: read the thesis, evidence, tracked variables and next check.
 3. `create_research_follow`, then `check_research_follow` with the saved Follow Card whenever you want an update.
 
+### The short loop for both
+
+- `find_research`: one search across Research Packs and tracked variables for a company, ticker or idea.
+- `what_changed`: one check for everything you follow, Pack Follow Cards and your own harness together. It leads with one headline, then one line per item, and says what to save after you review.
+- `show_research_pack_card`: draws a Pack as a card in Claude or ChatGPT. `get_research_pack` with `format: "card"` returns the same card as data.
+
 Two ways to use it: track your own thesis, or follow a Research Pack EquityLayer publishes.
 
 - **Your own thesis:** CPO and custom ASIC have readings today. Space is being added. Physical AI variables are listed, but most readings are withheld.
